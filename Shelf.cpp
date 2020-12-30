@@ -9,14 +9,15 @@
 Shelf::Shelf(std::string fileName)
 {
     std::ifstream file(fileName);
-    std::vector<char> v1;
+    std::vector<Ink> v1;
 
     if(file.is_open())
     {
         char c;
         while(file>>c)
         {
-            v1.push_back(c);
+            Ink ink = Ink(c);
+            v1.push_back(ink);
         }
     }
     else
@@ -28,12 +29,13 @@ Shelf::Shelf(std::string fileName)
 Shelf::Shelf(int number)
 {
     char colours[4] = {'C', 'M', 'Y', 'K'};
-    std::vector<char> v1;
+    std::vector<Ink> v1;
 
     for( int i = 0; i < number; i++ )
     {
         int colour = std::rand() % 4;
-        v1.push_back(colours[colour]);
+        Ink ink = Ink(colours[colour]);
+        v1.push_back(ink);
     }
 
     shelf = v1;
@@ -41,7 +43,7 @@ Shelf::Shelf(int number)
 
 Shelf::Shelf(int amount, std::string sequences[], int probabilities[], int size)
 {
-    std::vector<char> v1;
+    std::vector<Ink> v1;
     char colours[4] = {'C', 'M', 'Y', 'K'};
 
     for(int i = 0; i < amount; ++i)
@@ -71,16 +73,30 @@ Shelf::Shelf(int amount, std::string sequences[], int probabilities[], int size)
         }
 
         if(index == -1)
-            v1.push_back(colours[rand()%4]);
+        {
+            Ink ink = Ink(colours[rand()%4]);
+            v1.push_back(ink);
+        
+        }
         else
         {
             std::string sequence = sequences[index];
 
             for(int i = 0; i < sequence.length(); i++)
-                v1.push_back(sequence[i]);
+            {
+                Ink ink = Ink(sequence[i]);
+                v1.push_back(ink);
+            }
         }
         
     }
 
     shelf = v1;
+}
+
+void Shelf::showShelf()
+{
+    for(int i = 0; i < shelf.size(); i++)
+        std::cout << shelf[i].getColour();
+    std::cout << std::endl;
 }
