@@ -2,41 +2,17 @@
 #include <fstream>
 #include <vector>
 #include "Shelf.hpp"
+#include "Ink.hpp"
 
 using namespace std;
 
-vector<char> createShelfFromFile(string filename)
+void solve(Shelf shelf, string outFileName)
 {
-    Shelf *s1 = new Shelf(filename);
-    return s1->getShelf();
-}
-
-vector<char> randomShelfCreator(int number)
-{
-    Shelf *s1 = new Shelf(number);
-    return s1->getShelf();
-}
-
-vector<char> sequenceCreator(int amount, string seq[], int possibilities[], int number)
-{
-    Shelf *s = new Shelf(amount, seq, possibilities, number);
-    return s->getShelf();
-}
-
-void solve(vector<char> shelf, string outFileName)
-{
-    for(int i = 0; i < shelf.size(); i++)
-    {
-        cout << shelf[i];
-    }
-
-    cout << endl;
+    shelf.showShelf();
 }
 
 int main(int argc, char *argv[])
-{
-    vector<char> shelf;
-    
+{    
     if (argc > 1)
     {
         string mode = argv[1];
@@ -45,9 +21,8 @@ int main(int argc, char *argv[])
         {
             if(argc > 3)
             {
-                shelf = createShelfFromFile(string(argv[2]));
+                Shelf shelf = Shelf(string(argv[2]));
                 solve(shelf, string(argv[3]));
-                return 0;
             }
             else 
             {
@@ -62,7 +37,7 @@ int main(int argc, char *argv[])
             {
                 if(argc==3)
                 {
-                    shelf = randomShelfCreator(stoi(argv[2]));
+                    Shelf shelf = Shelf(stoi(argv[2]));
                     solve(shelf, "out.txt");
                 }
                 else if (argc%2 == 1)
@@ -85,7 +60,7 @@ int main(int argc, char *argv[])
                         }
                     }
 
-                    shelf = sequenceCreator(amount, seq, possibilities, number);
+                    Shelf shelf = Shelf(amount, seq, possibilities, number);
                     solve(shelf, "out.txt");
                 }
                 else
@@ -116,7 +91,7 @@ int main(int argc, char *argv[])
                 {
                     for(int j = 0; j < instancesNum; ++j)
                     {
-                        shelf = randomShelfCreator(amount);
+                        Shelf shelf = Shelf(amount);
                         solve(shelf, "out.txt");
                     }
                     amount += step;
