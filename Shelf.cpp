@@ -1,9 +1,4 @@
 #include "Shelf.hpp"
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <cstdlib>
 
 
 Shelf::Shelf(std::string fileName)
