@@ -3,17 +3,37 @@
 #include <vector>
 #include "Shelf.hpp"
 #include "Ink.hpp"
+#include "Robot.hpp"
 
 using namespace std;
+
+void saveShelf(Shelf shelf, string outfilename) //cos z tym jest nie tak
+{
+    vector<Ink> s = shelf.getShelf();
+    int size = s.size();
+    char data[size];
+    for(int i = 0; i < size; ++i)
+        data[i] = s[i].getColour();
+    
+    ofstream outfile;
+    outfile.open(outfilename);
+    outfile << data << endl;                    //do pliku wpisywane sa dziwne znaki na koncu 
+    outfile.close();
+}
 
 void solve(Shelf shelf, string outFileName)
 {
     shelf.showShelf();
+    Robot r;
+    r.brutalSolver(&shelf);
+    shelf.showShelf();
+    saveShelf(shelf, outFileName);
 }
 
 int main(int argc, char *argv[])
-{
-    string outFile = "out.txt";
+{  
+    string outFile = "out.txt";  
+
     if (argc > 1)
     {
         string mode = argv[1];
