@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cstdlib>
 #include "Ink.hpp"
 
 class Shelf
@@ -18,7 +19,9 @@ class Shelf
         Shelf(int amount, std::string sequences[], int probabilities[], int size);
         ~Shelf() {};
         std::vector<Ink> getShelf() {return shelf;};
+        void setShelf(std::vector<Ink> s) {shelf = s;};
         void showShelf();
+
 };
 
 #endif
