@@ -12,7 +12,8 @@ void solve(Shelf shelf, string outFileName)
 }
 
 int main(int argc, char *argv[])
-{    
+{
+    string outFile = "out.txt";
     if (argc > 1)
     {
         string mode = argv[1];
@@ -38,7 +39,7 @@ int main(int argc, char *argv[])
                 if(argc==3)
                 {
                     Shelf shelf = Shelf(stoi(argv[2]));
-                    solve(shelf, "out.txt");
+                    solve(shelf, outFile);
                 }
                 else if (argc%2 == 1)
                 {
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
                     }
 
                     Shelf shelf = Shelf(amount, seq, possibilities, number);
-                    solve(shelf, "out.txt");
+                    solve(shelf, outFile);
                 }
                 else
                 {
@@ -92,7 +93,7 @@ int main(int argc, char *argv[])
                     for(int j = 0; j < instancesNum; ++j)
                     {
                         Shelf shelf = Shelf(amount);
-                        solve(shelf, "out.txt");
+                        solve(shelf, outFile);
                     }
                     amount += step;
                 }
