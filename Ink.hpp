@@ -9,6 +9,7 @@ class Ink
         char colour;
     
     public:
+        Ink() {};
         Ink(char col) {colour = col;};
         ~Ink() {};
         char getColour() {return colour;};
