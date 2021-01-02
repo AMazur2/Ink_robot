@@ -1,6 +1,57 @@
 #include "Robot.hpp"
 
 
+int Robot::findNumber(std::vector<Ink> shelf)   //zwraca maksymalna ilosc czworek mozliwa do ulozenia
+{
+    int c, m, y, k = 0;
+    for(int i = 0; i < shelf.size(); ++i)
+    {
+        if(shelf[i].getColour() == 'C')
+            c++;
+        else if(shelf[i].getColour() == 'M')
+            m++;
+        else if(shelf[i].getColour() == 'Y')
+            y++;
+        else
+            k++;  
+    }
+    int min1 = std::min(c,m);
+    int min2 = std::min(y,k);
+    return std::min(min1,min2);
+}
+
+std::vector<int> Robot::findFours(std::vector<Ink> shelf)   //znajduje wysztkie ulozone juz czworki
+{
+    std::vector<int> places;
+    int start = 0;
+
+    while(start < shelf.size())
+    {
+        int counter = 0;
+        if(shelf[start].getColour() == 'C' && shelf.size()-start > 3)
+        {
+            counter++;
+            bool continous = true;
+            for(int i = 1; i < 4; ++i)
+            {
+                if(shelf[start+i].getColour() == types[i] && continous)
+                    counter++;
+                else if( shelf[start+i].getColour() != types[i] && continous)
+                    continous = false;
+            }
+        }
+        if(counter == 4)
+        {
+            places.push_back(start);
+            start += 4;
+        }
+        else
+            start +=counter;
+    }
+
+    return places;
+}
+
 std::vector<Ink> Robot::moveRight(std::vector<Ink> shelf, int start)    //przesuwa w prawo 4 pojemniki zaczynajac od indeksu 'start' a reszte dosuwa zapelniajac puste pole
 {
     Ink temp[4];
@@ -37,6 +88,55 @@ std::vector<Ink> Robot::moveLeft(std::vector<Ink> shelf, int start, int stop)   
             shelf[shelf.size()-4+j] = temporary[j];
     }
     return shelf;
+}
+
+std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours, int start)    //przesuwa gotowe czworki na poczatek ciagu     TODO: Dokonczyc
+{
+    std::vector<Ink> temporary;
+    if(fours.size() > 0)
+    {
+        if( start == fours[0] && start%4 == 0)              //czwórka jest już na miejscu
+        {
+            fours.erase(fours.begin());
+            temporary = sortFours(shelf, fours, start+4);
+        }
+        else
+        {
+            int position = fours[0];
+            int size = shelf.size();
+            if(size%4 == 0)                                 //rozmiar ciagu pozwala nam bezproblemowo dokonac przemieszczenia
+            {
+                fours.erase(fours.begin());
+                temporary = sortFours(moveLeft(moveRight(shelf, position), start, size-5), fours, start+4);
+            }
+            else
+            {
+                int shift = 0;
+                bool notFound = true;
+                int i = 1;
+                while(notFound)                         //obliczamy przemieszczenie jakie trzeba zastosować aby czworka byla na dobrej pozycji
+                {
+                    shift++;
+                    if(shelf.size() - i == 0)
+                        notFound = false;
+                    else
+                        i++;
+                    
+                }
+
+                if(fours.size() > 1)
+                {
+
+                }
+                else
+                {
+                    
+                }
+            }
+            
+        }
+    }
+    return temporary;
 }
 
 std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextColour)
@@ -113,8 +213,62 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
     
 }
 
+std::vector<Ink> Robot::naive(std::vector<Ink> shelf, int start, int nextColour)    //TODO: algorytm
+{
+    return shelf;
+}
+
+std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int nextColour) //TODO: algorytm
+{
+    return shelf;
+}
+
+std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextColour, int toSort) //TODO: algorytm
+{
+    return shelf;
+}
 
 void Robot::brutalSolver(Shelf *shelf)
 {
     shelf->setShelf(brutalForce(shelf->getShelf(), 0, 0));
 }
+
+void Robot::naiveSolver(Shelf *shelf)       //TODO: uzupelnic
+{
+    int num = findNumber(shelf->getShelf());
+    if( num == 0)
+        return;
+    else
+        std::cout << "TODO: naive solver" << std::endl;
+
+    return;
+}
+
+void Robot::maximalSubstringSolver(Shelf *shelf)    //TODO: uzupelnic
+{
+    int num = findNumber(shelf->getShelf());
+    if( num == 0)
+        return;
+    else
+        std::cout << "TODO: maximal substring solver" << std::endl;
+
+    return;
+}
+
+void Robot::positionSolver(Shelf *shelf)    //TODO: uzupelnic
+{
+    int num = findNumber(shelf->getShelf());
+    if( num == 0 )
+        return;
+    else
+    {
+        std::vector<int> fours = findFours(shelf->getShelf());
+        std::cout << fours.size() <<std::endl;
+        if(fours.size() > 0)
+        {
+            std::vector<Ink> temp = sortFours(shelf->getShelf(), fours, 0);
+        }
+
+    }  
+}
+
