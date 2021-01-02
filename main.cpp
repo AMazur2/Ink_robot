@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <string>
 #include "Shelf.hpp"
 #include "Ink.hpp"
 #include "Robot.hpp"
@@ -29,7 +30,17 @@ void solve(Shelf shelf, string outFileName, string solver)
         r.brutalSolver(&shelf);
     else if (solver == "naive")
     {
-        cout << "TODO: naive solver" << endl;
+        r.naiveSolver(&shelf);
+        return;
+    }
+    else if (solver == "substring")
+    {
+        r.maximalSubstringSolver(&shelf);
+        return;
+    }
+    else if (solver == "position")
+    {
+        r.positionSolver(&shelf);
         return;
     }
     else
@@ -158,7 +169,7 @@ int main(int argc, char *argv[])
             cout << "numberOfSteps - how many different sizes of problems will be solved" << endl;
             cout << "numberOfInstances - how many problems of one size will be solved" << endl << endl;
             cout << "Posiible solvers:" << endl;
-            cout << "brutal" << "\tnaive" << endl;
+            cout << "brutal" << "\tnaive" << "\tposition" << "\tsubstring" << endl;
         }
         else
         {
@@ -176,3 +187,4 @@ int main(int argc, char *argv[])
     
     return 0;
 }
+
