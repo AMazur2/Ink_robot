@@ -437,7 +437,7 @@ void Robot::naiveSolver(Shelf *shelf)
     }
 }
 
-void Robot::maximalSubstringSolver(Shelf *shelf)  
+void Robot::maximalSubstringSolver(Shelf *shelf)            //TODO: zmienic czwórki na maksymalne podciagi 
 {
     int num = findNumber(shelf->getShelf());
     if( num == 0 )
