@@ -14,8 +14,8 @@ class Robot
         std::vector<Ink> moveLeft(std::vector<Ink> shelf, int start, int stop);
         std::vector<Ink> sortFours(std::vector<Ink> shelf, std::vector<int> fours, int start);
         std::vector<Ink> brutalForce(std::vector<Ink> shelf, int start, int nextColour);
-        std::vector<Ink> naive(std::vector<Ink> shelf, int start, int nextColour);
-        std::vector<Ink> maximalSubstring(std::vector<Ink> shelf, int start, int nextColour);
+        std::vector<Ink> naive(std::vector<Ink> shelf, int start, int nextColour, int toSort);
+        std::vector<Ink> maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int toSort);
         std::vector<Ink> positions(std::vector<Ink> shelf, int start, int nextColour, int toSort);
     public:
         Robot() {};
