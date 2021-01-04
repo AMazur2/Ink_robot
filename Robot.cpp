@@ -363,19 +363,38 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
     
 }
 
-std::vector<Ink> Robot::naive(std::vector<Ink> shelf, int start, int nextColour)    //TODO: algorytm
+std::vector<Ink> Robot::naive(std::vector<Ink> shelf, int start, int nextColour, int toSort)    //TODO: algorytm
 {
-    return shelf;
+    if( toSort == 0)
+        return shelf;
+    else
+    {
+        std::cout << "TODO: naive algorithm" << std::endl;
+        return shelf;
+    }  
 }
 
-std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int nextColour) //TODO: algorytm
+std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int toSort) //TODO: algorytm
 {
-    return shelf;
+    if( toSort == 0)
+        return shelf;
+    else
+    {
+        std::cout << "TODO: maximal substring algorithm" << std::endl;
+        return shelf;
+    }  
 }
 
 std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextColour, int toSort) //TODO: algorytm
 {
-    return shelf;
+    if( toSort == 0 )
+        return shelf;
+    else
+    {
+        std::cout << "TODO: positions algorithm" << std::endl;
+        return shelf;
+    }
+    
 }
 
 void Robot::brutalSolver(Shelf *shelf)
@@ -383,29 +402,7 @@ void Robot::brutalSolver(Shelf *shelf)
     shelf->setShelf(brutalForce(shelf->getShelf(), 0, 0));
 }
 
-void Robot::naiveSolver(Shelf *shelf)       //TODO: uzupelnic
-{
-    int num = findNumber(shelf->getShelf());
-    if( num == 0)
-        return;
-    else
-        std::cout << "TODO: naive solver" << std::endl;
-
-    return;
-}
-
-void Robot::maximalSubstringSolver(Shelf *shelf)    //TODO: uzupelnic
-{
-    int num = findNumber(shelf->getShelf());
-    if( num == 0)
-        return;
-    else
-        std::cout << "TODO: maximal substring solver" << std::endl;
-
-    return;
-}
-
-void Robot::positionSolver(Shelf *shelf)    //TODO: uzupelnic
+void Robot::naiveSolver(Shelf *shelf)    
 {
     int num = findNumber(shelf->getShelf());
     if( num == 0 )
@@ -417,8 +414,96 @@ void Robot::positionSolver(Shelf *shelf)    //TODO: uzupelnic
         if(fours.size() > 0)
         {
             temp = sortFours(shelf->getShelf(), fours, 0);
-            shelf->setShelf(temp);
+            std::vector<int> newFours = findFours(temp);
+            bool consist = true;
+            int start = 0;
+            int index = 0;
+            while(consist)
+            {
+                if(index < newFours.size() && start == newFours[index])
+                {
+                    start += 4;
+                    index++;
+                    num--;
+                }
+                else
+                    consist = false;
+            }
+            std::cout << num << std::endl;
+            return shelf->setShelf(naive(temp, start, 0, num));
         }
+
+       return shelf->setShelf(naive(shelf->getShelf(), 0, 0, num));
+    }
+}
+
+void Robot::maximalSubstringSolver(Shelf *shelf)  
+{
+    int num = findNumber(shelf->getShelf());
+    if( num == 0 )
+        return;
+    else
+    {
+        std::vector<Ink> temp;
+        std::vector<int> fours = findFours(shelf->getShelf());
+        if(fours.size() > 0)
+        {
+            temp = sortFours(shelf->getShelf(), fours, 0);
+            std::vector<int> newFours = findFours(temp);
+            bool consist = true;
+            int start = 0;
+            int index = 0;
+            while(consist)
+            {
+                if(index < newFours.size() && start == newFours[index])
+                {
+                    start += 4;
+                    index++;
+                    num--;
+                }
+                else
+                    consist = false;
+            }
+            std::cout << num << std::endl;
+            return shelf->setShelf(maximalSubstring(temp, start, 0, num));
+        }
+
+        return shelf->setShelf(maximalSubstring(shelf->getShelf(), 0, 0, num)); 
+    }
+}
+
+void Robot::positionSolver(Shelf *shelf)
+{
+    int num = findNumber(shelf->getShelf());
+    if( num == 0 )
+        return;
+    else
+    {
+        std::vector<Ink> temp;
+        std::vector<int> fours = findFours(shelf->getShelf());
+        if(fours.size() > 0)
+        {
+            temp = sortFours(shelf->getShelf(), fours, 0);
+            std::vector<int> newFours = findFours(temp);
+            bool consist = true;
+            int start = 0;
+            int index = 0;
+            while(consist)
+            {
+                if(index < newFours.size() && start == newFours[index])
+                {
+                    start += 4;
+                    index++;
+                    num--;
+                }
+                else
+                    consist = false;
+            }
+            std::cout << num << std::endl;
+            return shelf->setShelf(positions(temp,start, 0, num));
+        }
+
+        return shelf->setShelf(positions(shelf->getShelf(), 0, 0, num));        
     }  
 }
 
