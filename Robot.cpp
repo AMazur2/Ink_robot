@@ -3,7 +3,7 @@
 
 int Robot::findNumber(std::vector<Ink> shelf)   //zwraca maksymalna ilosc czworek mozliwa do ulozenia
 {
-    int c, m, y, k = 0;
+    int c = 0, m = 0, y = 0, k = 0;
     for(int i = 0; i < shelf.size(); ++i)
     {
         if(shelf[i].getColour() == 'C')
@@ -27,10 +27,9 @@ std::vector<int> Robot::findFours(std::vector<Ink> shelf)   //znajduje wysztkie 
 
     while(start < shelf.size())
     {
-        int counter = 0;
+        int counter = 1;
         if(shelf[start].getColour() == 'C' && shelf.size()-start > 3)
         {
-            counter++;
             bool continous = true;
             for(int i = 1; i < 4; ++i)
             {
@@ -40,13 +39,11 @@ std::vector<int> Robot::findFours(std::vector<Ink> shelf)   //znajduje wysztkie 
                     continous = false;
             }
         }
+
         if(counter == 4)
-        {
             places.push_back(start);
-            start += 4;
-        }
-        else
-            start +=counter;
+        
+        start+= counter;
     }
 
     return places;
@@ -54,18 +51,22 @@ std::vector<int> Robot::findFours(std::vector<Ink> shelf)   //znajduje wysztkie 
 
 std::vector<Ink> Robot::moveRight(std::vector<Ink> shelf, int start)    //przesuwa w prawo 4 pojemniki zaczynajac od indeksu 'start' a reszte dosuwa zapelniajac puste pole
 {
+    std::vector<Ink> v;
+    for(int i = 0; i < start; ++i)
+        v.push_back(shelf[i]);
+
     Ink temp[4];
     int shelfSize = shelf.size();
     for(int i = 0; i < 4; ++i)
         temp[i] = shelf[start+i];
     
-    for(int i = 0; i < shelfSize-4; ++i)
-        shelf[start+i] = shelf[start+i+4];
+    for(int i = start+4; i < shelfSize; ++i)
+        v.push_back(shelf[i]);
 
     for(int i = 0; i < 4; ++i)
-        shelf[shelfSize-4+i] = temp[i];
+        v.push_back(temp[i]);
 
-    return shelf;
+    return v;
 }
 
 std::vector<Ink> Robot::moveLeft(std::vector<Ink> shelf, int start, int stop)   //przesuwa pojemniki tak, aby pojemnik na miejscu 'stop+1' znalazl sie na miejscu 'start'
@@ -90,8 +91,19 @@ std::vector<Ink> Robot::moveLeft(std::vector<Ink> shelf, int start, int stop)   
     return shelf;
 }
 
-std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours, int start)    //przesuwa gotowe czworki na poczatek ciagu     TODO: Dokonczyc
+std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours, int start)    //przesuwa gotowe czworki na poczatek ciagu
 {
+    //ulatwia znajdywanie bledow
+/*    std::cout << "fours.size(): " << fours.size();
+    if(fours.size() > 0)
+        std::cout << "\t\tfours[0]: " << fours[0];
+    else
+        std::cout << "\t\tfours[0]: -";    
+    std::cout << "\tstart: " << start << "\tshelf: ";
+    for(int i = 0; i < shelf.size(); ++i)
+        std::cout<< shelf[i].getColour();
+    std::cout <<std::endl;  */
+
     std::vector<Ink> temporary;
     if(fours.size() > 0)
     {
@@ -102,40 +114,178 @@ std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours
         }
         else
         {
-            int position = fours[0];
-            int size = shelf.size();
-            if(size%4 == 0)                                 //rozmiar ciagu pozwala nam bezproblemowo dokonac przemieszczenia
+            if((fours[0]-start)%4 == 0)                     //pomiędzy kolejną czwórką a 'startem' jest 4k miejsc
             {
+                int temp = fours[0];
+                int amount = temp - start;                  //o ile miejsc zostanie przesuniety ciag znajdujacy sie za czworka
                 fours.erase(fours.begin());
-                temporary = sortFours(moveLeft(moveRight(shelf, position), start, size-5), fours, start+4);
+                for(int i = 0; i < fours.size(); ++i)
+                    fours[i] -= amount;                     //aktualizujemy pozycje czworek 
+                temporary = sortFours(moveLeft(shelf, start, temp-1), fours, start+4);
             }
             else
             {
-                int shift = 0;
-                bool notFound = true;
-                int i = 1;
-                while(notFound)                         //obliczamy przemieszczenie jakie trzeba zastosować aby czworka byla na dobrej pozycji
+                int position = fours[0];
+                int size = shelf.size();
+                if(size%4 == 0)                         //rozmiar ciagu pozwala nam bezproblemowo dokonac przemieszczenia
                 {
-                    shift++;
-                    if(shelf.size() - i == 0)
-                        notFound = false;
-                    else
-                        i++;
-                    
-                }
-
-                if(fours.size() > 1)
-                {
-
+                    fours.erase(fours.begin());
+                    temporary = sortFours(moveLeft(moveRight(shelf, position), start, size-5), fours, start+4);
                 }
                 else
                 {
-                    
+
+                    int shift = 0;
+                    bool notFound = true;
+                    int i = 1;
+                    while(notFound)                     //obliczamy przemieszczenie jakie trzeba zastosować aby czworka byla na dobrej pozycji
+                    {
+                        shift++;
+                        if(shelf.size()%4 - i == 0)
+                            notFound = false;
+                        else
+                            i++;
+                    }
+
+                    int pos = 4-shift;                  //pozycja w przemiszczanej czworce poczatku ulozonej czworki
+                    int tempStart = position - pos;     //poczatek przemiszczanej czworki
+                    if(fours.size() > 1)                //mamy wiecej ulozonych czworek niz 1
+                    {
+                        if(tempStart >= start)          //nie jesteśmy ograniczeni z lewej strony
+                        {
+                            if(tempStart+8 < fours[1])      //mamy bezpieczną odleglość do przesuwania (aby nie uszkodzic nastepnej czworki)
+                            {
+                                std::vector<Ink> temp = moveLeft(moveRight(moveRight(shelf, tempStart), tempStart), start, shelf.size()-5-shift);
+                                std::vector<int> foursPrim = findFours(temp);
+                                bool deleted = true;
+                                while(deleted)                          //usuwamy te, ktore juz sa ulozone
+                                {
+                                    if(foursPrim[0] < start+4)
+                                        foursPrim.erase(foursPrim.begin());
+                                    else 
+                                        deleted = false;
+                                }
+                                temporary = sortFours(temp, foursPrim, start+4);
+                            }
+                            else                            //najedziemy na kolejna czworke
+                            {
+                                
+                                int amount = 2;             //ile czworek bedziemy przenosic
+                                bool contains = true;       //czy kolejna czworka zawiera w sobie inna ulozona czworke
+                                int index = 1;
+                                while(contains)             //ile czworek musimy przeniesc
+                                {
+                                    if(tempStart+4*amount >= fours[index] && index < fours.size())
+                                    {
+                                        amount++;
+                                        index++;
+                                    }
+                                    else 
+                                        contains = false;
+                                }
+
+                                if(tempStart+4*amount > shelf.size())   //nie mozemy przeniesc wszystkich poniewaz wykracza to poza zakres polki
+                                    amount--;                           //ostatnia musimy zniszczyc by reszte mozna bylo przeniesc
+
+                                std::vector<Ink> temp = shelf;
+                                for(int i = 0; i < amount; ++i)         //przenosimy wyliczona ilosc czworek
+                                {
+                                    temporary = moveRight(temp, tempStart);
+                                    temp = temporary;
+                                }
+
+                                temporary = moveLeft(temp, start, shelf.size()-amount*4+pos-1); //doprowadzamy nasza czworke na poczatek (obecny 'start')
+                                temp = temporary;
+                                std::vector<int> foursPrim = findFours(temp);                //obliczamy nowe pozycje czworek
+
+                                bool deleted = true;
+                                while(deleted)                          //usuwamy te, ktore juz sa ulozone
+                                {
+                                    if(foursPrim[0] < start+4)
+                                        foursPrim.erase(foursPrim.begin());
+                                    else 
+                                        deleted = false;
+                                }
+
+                                temporary = sortFours(temp, foursPrim, start+4);
+                            }
+                        }
+                        else                            //jestesy ograniczeni z lewej strony 
+                        {
+                            tempStart = start;
+                            std::vector<Ink> temp;
+                            if(tempStart+8 < fours[1])
+                            {
+                                temp = moveRight(moveRight(shelf, tempStart), tempStart);
+                                fours = findFours(temp);
+                                bool deleted = true;
+                                while(deleted)    
+                                {
+                                    if(fours[0] < start+4)
+                                        fours.erase(fours.begin());
+                                    else 
+                                        deleted = false;
+                                }
+                                temporary = sortFours(temp, fours, start);
+                            }
+                            else
+                            {
+                                int amount = 2;
+                                bool contains = true;
+                                int index = 1;
+                                while(contains)
+                                {
+                                    if(index < fours.size() && tempStart+amount*4 > fours[index])
+                                    {
+                                        amount++;
+                                        index++;
+                                    }
+                                    else 
+                                        contains = false;
+                                }
+
+                                if(tempStart+amount*4 > shelf.size())
+                                    amount--;
+                                
+                                temp = shelf;
+                                for(int i = 0; i < amount; ++i)
+                                {
+                                    temporary = moveRight(temp, tempStart);
+                                    temp = temporary;
+                                }
+                                fours = findFours(temp);
+                                bool deleted = true;
+                                while (deleted)
+                                {
+                                    if(fours[0] < start)
+                                        fours.erase(fours.begin());
+                                    else 
+                                        deleted = false;
+                                }
+
+                                temporary = sortFours(temp, fours, start);
+                                
+                            }
+                        }
+                    }
+                    else        //nie musimy sie przejmowac by nie zniszcyc innymch czworkek bo wiecej juz nie ma 
+                    {
+                        if(tempStart > start && tempStart + 8 < shelf.size())
+                        {
+                            temporary = moveLeft(moveRight(moveRight(shelf, tempStart), tempStart), start, shelf.size()-5-shift);
+                        }
+                        else
+                            temporary = shelf;
+                        
+                    }    
                 }
+        
             }
             
         }
     }
+    else
+        return shelf;
     return temporary;
 }
 
@@ -262,13 +412,13 @@ void Robot::positionSolver(Shelf *shelf)    //TODO: uzupelnic
         return;
     else
     {
+        std::vector<Ink> temp;
         std::vector<int> fours = findFours(shelf->getShelf());
-        std::cout << fours.size() <<std::endl;
         if(fours.size() > 0)
         {
-            std::vector<Ink> temp = sortFours(shelf->getShelf(), fours, 0);
+            temp = sortFours(shelf->getShelf(), fours, 0);
+            shelf->setShelf(temp);
         }
-
     }  
 }
 
