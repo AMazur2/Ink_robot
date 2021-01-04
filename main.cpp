@@ -41,6 +41,7 @@ void solve(Shelf shelf, string outFileName, string solver)
     else if (solver == "position")
     {
         r.positionSolver(&shelf);
+        shelf.showShelf();
         return;
     }
     else
@@ -169,7 +170,7 @@ int main(int argc, char *argv[])
             cout << "numberOfSteps - how many different sizes of problems will be solved" << endl;
             cout << "numberOfInstances - how many problems of one size will be solved" << endl << endl;
             cout << "Posiible solvers:" << endl;
-            cout << "brutal" << "\tnaive" << "\tposition" << "\tsubstring" << endl;
+            cout << "brutal" << "\t\tnaive" << "\t\tposition" << "\tsubstring" << endl;
         }
         else
         {
@@ -187,4 +188,3 @@ int main(int argc, char *argv[])
     
     return 0;
 }
-
