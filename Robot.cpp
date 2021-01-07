@@ -436,8 +436,8 @@ std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int 
     {
         std::pair<int, int> p = findMaximalSubstring(shelf, start, nextColour);     //p.first - zawiera w sobie informacje o poczatku najdluzszego podciagu
         std::cout << "TODO: maximal substring algorithm" << std::endl;              //p.second - informuje jak dlugi jest ten podciag
-        return shelf;
-    }  
+        return shelf;                                                               //to co nalezy teraz zorbic to ulozyc ten podciag na odpowiednim miejscu
+    }                                                                               //i podac wlasciwe parametry do rekursji 
 }
 
 std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextColour, int toSort) //TODO: algorytm
