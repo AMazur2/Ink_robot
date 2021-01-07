@@ -289,6 +289,60 @@ std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours
     return temporary;
 }
 
+std::pair<int, int> Robot::findMaximalSubstring (std::vector<Ink> shelf, int start, int colour)
+{
+    int begining = 0;
+    int length = 0;
+    int tempBeg = 0;
+    int tempLen = 0;
+    int i = start;
+    bool inSubstring = false;
+    int nextColour = colour;
+    while( i < shelf.size())
+    {
+        if(shelf[i].getColour() == types[nextColour])
+        {
+            if(!inSubstring)
+            {
+                tempBeg = i;
+                inSubstring = true;
+            }
+            
+            tempLen++;
+            
+            nextColour += 1;
+            nextColour %= 4;
+        }
+        else 
+        {
+            if(inSubstring)
+            {
+                inSubstring = false;
+                if( tempLen > length )
+                {
+                    length = tempLen;
+                    begining = tempBeg;
+                    nextColour = colour;
+                }
+                tempLen = 0;
+                tempBeg = 0;
+
+            }
+        }
+
+        if(i+1 == shelf.size())
+        {
+            if(tempLen > length)
+            {
+                length = tempLen;
+                begining = tempBeg;
+            }
+        }
+        i++;
+    }
+    return std::make_pair(begining, length);
+}
+
 std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextColour)
 {
     std::vector<Ink> temporaryShelf;
@@ -380,7 +434,8 @@ std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int 
         return shelf;
     else
     {
-        std::cout << "TODO: maximal substring algorithm" << std::endl;
+        std::pair<int, int> p = findMaximalSubstring(shelf, start, nextColour);     //p.first - zawiera w sobie informacje o poczatku najdluzszego podciagu
+        std::cout << "TODO: maximal substring algorithm" << std::endl;              //p.second - informuje jak dlugi jest ten podciag
         return shelf;
     }  
 }
@@ -437,39 +492,13 @@ void Robot::naiveSolver(Shelf *shelf)
     }
 }
 
-void Robot::maximalSubstringSolver(Shelf *shelf)            //TODO: zmienic czwórki na maksymalne podciagi 
+void Robot::maximalSubstringSolver(Shelf *shelf)  
 {
     int num = findNumber(shelf->getShelf());
     if( num == 0 )
         return;
     else
-    {
-        std::vector<Ink> temp;
-        std::vector<int> fours = findFours(shelf->getShelf());
-        if(fours.size() > 0)
-        {
-            temp = sortFours(shelf->getShelf(), fours, 0);
-            std::vector<int> newFours = findFours(temp);
-            bool consist = true;
-            int start = 0;
-            int index = 0;
-            while(consist)
-            {
-                if(index < newFours.size() && start == newFours[index])
-                {
-                    start += 4;
-                    index++;
-                    num--;
-                }
-                else
-                    consist = false;
-            }
-            std::cout << num << std::endl;
-            return shelf->setShelf(maximalSubstring(temp, start, 0, num));
-        }
-
         return shelf->setShelf(maximalSubstring(shelf->getShelf(), 0, 0, num)); 
-    }
 }
 
 void Robot::positionSolver(Shelf *shelf)
@@ -506,4 +535,3 @@ void Robot::positionSolver(Shelf *shelf)
         return shelf->setShelf(positions(shelf->getShelf(), 0, 0, num));        
     }  
 }
-
