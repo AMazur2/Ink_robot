@@ -2,7 +2,7 @@
 #define ROBOT_HPP
 
 #include "Shelf.hpp"
-
+#include <utility>
 
 class Robot
 {
@@ -13,6 +13,7 @@ class Robot
         std::vector<Ink> moveRight(std::vector<Ink> shelf, int start);
         std::vector<Ink> moveLeft(std::vector<Ink> shelf, int start, int stop);
         std::vector<Ink> sortFours(std::vector<Ink> shelf, std::vector<int> fours, int start);
+        std::pair<int, int> findMaximalSubstring (std::vector<Ink> shelf, int start, int colour);
         std::vector<Ink> brutalForce(std::vector<Ink> shelf, int start, int nextColour);
         std::vector<Ink> naive(std::vector<Ink> shelf, int start, int nextColour, int toSort);
         std::vector<Ink> maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int toSort);
