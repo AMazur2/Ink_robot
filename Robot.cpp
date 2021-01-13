@@ -74,21 +74,14 @@ std::vector<Ink> Robot::moveLeft(std::vector<Ink> shelf, int start, int stop)   
                                                                         //ze wzory ktore wyprowadzilem, zapewniaja juz optymalna ilosc pojemnikow do przesuwania
     int toMove = (stop - start + 1)/4;
 
+    std::vector<Ink> temp = shelf;
+    std::vector<Ink> s;
     for(int i = 0; i < toMove; i++)
     {
-        Ink temporary[4];
-        for(int j = 0; j < 4; ++j)
-            temporary[j] = shelf[start+j];
-    
-        int left = shelf.size() - start - 4;
-
-        for(int j = 0; j < left; ++j)
-            shelf[start+j] = shelf[start+j+4];
-        
-        for(int j = 0; j < 4; ++j)
-            shelf[shelf.size()-4+j] = temporary[j];
+        s = moveRight(temp, start);
+        temp = s;
     }
-    return shelf;
+    return temp;
 }
 
 std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours, int start)    //przesuwa gotowe czworki na poczatek ciagu
@@ -437,7 +430,7 @@ std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int 
         std::pair<int, int> p = findMaximalSubstring(shelf, start, nextColour);     //p.first - zawiera w sobie informacje o poczatku najdluzszego podciagu
         std::cout << "TODO: maximal substring algorithm" << std::endl;              //p.second - informuje jak dlugi jest ten podciag
         return shelf;                                                               //to co nalezy teraz zorbic to ulozyc ten podciag na odpowiednim miejscu
-    }                                                                               //i podac wlasciwe parametry do rekursji 
+    }                                                                               //i podac odpowiednie parametry do rekursji
 }
 
 std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextColour, int toSort) //TODO: algorytm
@@ -487,8 +480,8 @@ void Robot::naiveSolver(Shelf *shelf)
             std::cout << num << std::endl;
             return shelf->setShelf(naive(temp, start, 0, num));
         }
-
-       return shelf->setShelf(naive(shelf->getShelf(), 0, 0, num));
+        else
+            return shelf->setShelf(naive(shelf->getShelf(), 0, 0, num));
     }
 }
 
@@ -531,7 +524,8 @@ void Robot::positionSolver(Shelf *shelf)
             std::cout << num << std::endl;
             return shelf->setShelf(positions(temp,start, 0, num));
         }
-
-        return shelf->setShelf(positions(shelf->getShelf(), 0, 0, num));        
+        else
+            return shelf->setShelf(positions(shelf->getShelf(), 0, 0, num));        
     }  
 }
+
