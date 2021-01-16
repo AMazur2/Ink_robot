@@ -392,7 +392,8 @@ int Robot::findIndexOfWantedColourIfDivisibleByFour(int start, std::vector<Ink> 
     return -1;
 }
 
-void Robot::findOther(int startIndex, std::vector<Ink> shelf, char colour, int* whereToMoveRightIndex, int* indexOfWantedColour) {
+void Robot::findOther(int startIndex, std::vector<Ink> shelf, char colour, int *whereToMoveRightIndex,
+                      int *indexOfWantedColour) {
     int shelfSize = shelf.size();
     for (int currentIndex = startIndex; currentIndex < shelfSize; currentIndex++) {
         if (shelf[currentIndex].getColour() == colour) {
@@ -402,44 +403,54 @@ void Robot::findOther(int startIndex, std::vector<Ink> shelf, char colour, int* 
                 int x = n + m - 3;
                 int b = x % 4;
 
-                if(currentIndex - b < startIndex){
+                if (currentIndex - b < startIndex) {
                     std::cout << "cofasz sie za start";
                     exit(1);
                 }
                 (*whereToMoveRightIndex) = currentIndex - b;
-                (*indexOfWantedColour) = x + b;
+                (*indexOfWantedColour) = x + b + 1;
 
             }
         }
     }
 }
 
-std::vector<Ink> Robot::naive(std::vector<Ink> shelf, int start, int nextColour, int toSort)    //TODO: algorytm
+
+std::vector<Ink>
+Robot::moveWantedColorToCorrectPlace(std::vector<Ink> shelf, int start, char wantedColour, int fourInksPatternLeft) {
+
+    int indexOfWantedColour = -1;
+    indexOfWantedColour = findIndexOfWantedColourIfDivisibleByFour(start, shelf, wantedColour);
+
+    if (indexOfWantedColour == -1) {
+        int whereToMoveRightIndex = -1;
+        findOther(start, shelf, wantedColour, &whereToMoveRightIndex, &indexOfWantedColour);
+        shelf = moveRight(shelf, whereToMoveRightIndex);
+    }
+
+    if (indexOfWantedColour != start)
+        shelf = moveLeft(shelf, start, indexOfWantedColour - 1);
+
+    return shelf;
+}
+
+std::vector<Ink>
+Robot::naive(std::vector<Ink> shelf, int start, char wantedColour, int fourInksPatternLeft)    //TODO: algorytm
 {
-    if (toSort == 0)
+    if (fourInksPatternLeft == 0)
         return shelf;
     else {
-        char wantedColour = this->types[nextColour];
-//        showVariables(start, nextColour, toSort, wantedColour);
 
-        int indexOfWantedColour = -1;
-        indexOfWantedColour = findIndexOfWantedColourIfDivisibleByFour(start, shelf, wantedColour);
+        shelf = moveWantedColorToCorrectPlace(shelf, start, wantedColour, fourInksPatternLeft);
 
-        if (indexOfWantedColour == -1) {
-            int whereToMoveRightIndex = -1;
-            findOther(start, shelf, wantedColour, &whereToMoveRightIndex, &indexOfWantedColour);
-            shelf = moveRight(shelf, whereToMoveRightIndex);
-            shelf = moveLeft(shelf,start, indexOfWantedColour);
-            std::cout << "nie ma w dobrym miejscu" << std::endl;
-        } else {
-            if (indexOfWantedColour != start)
-                shelf = moveLeft(shelf, start, indexOfWantedColour - 1);
-            std::cout << "jest w dobrym miejscu" << std::endl;
-        }
+//        showVariables(start, nextColour, fourInksPatternLeft, wantedColour);
+
+
 
         return shelf;
     }
 }
+
 
 void Robot::showVariables(int start, int nextColour, int toSort, char wantedColour) const {
     std::cout << "start: " << start << std::endl;
@@ -498,9 +509,9 @@ void Robot::naiveSolver(Shelf *shelf) {
                     consist = false;
             }
             //temp - pulka, start - pierwsza pozycja nieułożona potencjalnie pozycja, num - liczba czworek do ulozenia jeszcze
-            return shelf->setShelf(naive(temp, start, 0, num));
+            return shelf->setShelf(naive(temp, start, this->types[0], num));
         } else
-            return shelf->setShelf(naive(shelf->getShelf(), 0, 0, num));
+            return shelf->setShelf(naive(shelf->getShelf(), 0, this->types[0], num));
     }
 }
 
@@ -539,6 +550,7 @@ void Robot::positionSolver(Shelf *shelf) {
             return shelf->setShelf(positions(shelf->getShelf(), 0, 0, num));
     }
 }
+
 
 
 
