@@ -1,7 +1,16 @@
 #include "Shelf.hpp"
 
 
-Shelf::Shelf(std::string fileName)
+Shelf *Shelf::getShelfFromSring(std::string s) {
+    std::vector<Ink> newShelf;
+    for(char c : s){
+        Ink i = Ink(c);
+        newShelf.push_back(i);
+    }
+    return new Shelf(newShelf);
+}
+
+Shelf* Shelf::getShelfFromFile(std::string fileName)
 {
     std::ifstream file(fileName);
     std::vector<Ink> v1;
@@ -18,7 +27,11 @@ Shelf::Shelf(std::string fileName)
     else
         std::cout<<"Couldn't open a file: " << fileName << std::endl;
 
-    shelf = v1;
+    return new Shelf(v1);
+}
+
+Shelf::Shelf(std::vector<Ink> shelf){
+    this->shelf = shelf;
 }
 
 Shelf::Shelf(int number)
@@ -95,3 +108,5 @@ void Shelf::showShelf()
         std::cout << shelf[i].getColour();
     std::cout << std::endl;
 }
+
+

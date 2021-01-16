@@ -9,3 +9,8 @@ add_executable(Ink_robot
         main.cpp
         Robot.cpp
         Shelf.cpp)
+
+add_executable(test
+        Shelf.cpp
+        Robot.cpp
+        test.cpp)

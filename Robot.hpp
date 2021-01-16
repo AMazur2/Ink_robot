@@ -18,6 +18,8 @@ class Robot
         std::vector<Ink> naive(std::vector<Ink> shelf, int start, int nextColour, int toSort);
         std::vector<Ink> maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int toSort);
         std::vector<Ink> positions(std::vector<Ink> shelf, int start, int nextColour, int toSort);
+
+
     public:
         Robot() {};
         ~Robot() {};
@@ -25,6 +27,15 @@ class Robot
         void naiveSolver(Shelf *shelf);
         void maximalSubstringSolver(Shelf *shelf);   //najwieksze podciagi
         void positionSolver(Shelf *shelf);  //optymalizacja czworkowa
+
+
+    int findIndexOfWantedColourIfDivisibleByFour(int start, std::vector<Ink> shelf, char wantedColour);
+
+    void showVariables(int start, int nextColour, int toSort, char wantedColour) const;
+
+    void
+    findOther(int startIndex, std::vector<Ink> shelf, char colour, int *whereToMoveRightIndex,
+              int *indexOfWantedColour);
 };
 
 #endif

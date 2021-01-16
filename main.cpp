@@ -66,8 +66,9 @@ int main(int argc, char *argv[])
             if(argc > 4)
             {
                 string solver = argv[2];
-                Shelf shelf = Shelf(string(argv[3]));
-                solve(shelf, string(argv[4]), solver);
+                Shelf *shelf = Shelf::getShelfFromFile(string(argv[3]));
+                Shelf s = (*shelf);
+                solve(s, string(argv[4]), solver);
             }
             else 
             {

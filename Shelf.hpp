@@ -10,17 +10,21 @@
 class Shelf
 {
     private:
-        std::vector<Ink> shelf;
+    Shelf(std::vector<Ink> shelf);
+
+    std::vector<Ink> shelf;
     
     public:
         Shelf() {};
-        Shelf(std::string fileName);
         Shelf(int number);
         Shelf(int amount, std::string sequences[], int probabilities[], int size);
         ~Shelf() {};
         std::vector<Ink> getShelf() {return shelf;};
         void setShelf(std::vector<Ink> s) {shelf = s;};
         void showShelf();
+
+        static Shelf*  getShelfFromSring(std::string s);
+        static Shelf*  getShelfFromFile(std::string fileName);
 
 };
 
