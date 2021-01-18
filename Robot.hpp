@@ -9,7 +9,11 @@ class Robot
     private:
         char types[4] = {'C', 'M', 'Y', 'K'};
         int robotMoves;
-        int findNumber(std::vector<Ink> shelf);
+public:
+    int getRobotMoves() const;
+
+private:
+    int findNumber(std::vector<Ink> shelf);
         std::vector<int> findFours(std::vector<Ink> shelf);
         std::vector<Ink> moveRight(std::vector<Ink> shelf, int start);
         std::vector<Ink> moveLeft(std::vector<Ink> shelf, int start, int stop);

@@ -735,6 +735,10 @@ void Robot::positionSolver(Shelf *shelf) {
     }
 }
 
+int Robot::getRobotMoves() const {
+    return robotMoves;
+}
+
 
 
 
