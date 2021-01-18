@@ -383,7 +383,10 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
 
                 if(index > shelf.size()-4+position)                         //jezeli nie mozemy zrobic takiej czworki aby dany pojemnik byl na odpowiednim miejscu
                 {                                                           //przenosimy poprzedzajaca czworke (przypadek ze pojemnik jest za daleko na prawo aby go przeniesc)
-                    temporaryShelf = brutalForce(moveRight(shelf, index-4), start, nextColour);
+                    if(index-4>start)
+                        temporaryShelf = brutalForce(moveRight(shelf, index-4), start, nextColour);
+                    else
+                        temporaryShelf = brutalForce(moveRight(shelf, start), start, nextColour);
                 }
                 else
                 {
