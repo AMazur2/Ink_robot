@@ -359,15 +359,16 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
                 if (index > shelf.size() - 4 +
                             position)                         //jezeli nie mozemy zrobic takiej czworki aby dany pojemnik byl na odpowiednim miejscu
                 {                                                           //przenosimy poprzedzajaca czworke (przypadek ze pojemnik jest za daleko na prawo aby go przeniesc)
-                    temporaryShelf = brutalForce(moveRight(shelf, index - 4), start, nextColour);
+                    if(index-4>start)
+                        temporaryShelf = brutalForce(moveRight(shelf, index-4), start, nextColour);
+                    else
+                        temporaryShelf = brutalForce(moveRight(shelf, start), start, nextColour);
                 } else {
-                    if (index - position >=
-                        start)                             //jezeli nasz pojemnik jest odpowiednio oddalony od punktu startu (mozemy stworzyc czworke
+                    if (index - position >= start)        //jezeli nasz pojemnik jest odpowiednio oddalony od punktu startu (mozemy stworzyc czworke
                     {                                                       //w ktorej pojemnik bedzie na odpowiednim miejscu)
                         std::vector<Ink> temp = moveLeft(moveRight(shelf, index - position), start, shelf.size() - 5 +
                                                                                                     position); //przenosimy ta czworke na prawo a potem przesuwamy
-                        temporaryShelf = brutalForce(temp, start + 1, (nextColour + 1) %
-                                                                      4);      //tak aby nasz pojemnik byl na miejscu 'start' i kontynuujemy algorytm
+                        temporaryShelf = brutalForce(temp, start + 1, (nextColour + 1) % 4);      //tak aby nasz pojemnik byl na miejscu 'start' i kontynuujemy algorytm
                     } else                                                    //pojemnik jest zbyt blisko startu wiec musimy go oddalic
                     {                                                       //przenosimy czworke zaczynajac od pojemnika znajdujacego sie na pozycji 'start'
                         int newPosition = shelf.size() - 4 + index -
@@ -491,7 +492,10 @@ Robot::naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatt
 
                     if (index > shelf.size() - 4 + position) //jezeli nie mozemy zrobic takiej czworki aby dany pojemnik byl na odpowiednim miejscu
                     {       //przenosimy poprzedzajaca czworke (przypadek ze pojemnik jest za daleko na prawo aby go przeniesc)
-                        temporaryShelf = naive(moveRight(shelf, index - 4), start, nextColour, fourInksPatternLeft);
+                        if(index-4>start)
+                            temporaryShelf = naive(moveRight(shelf, index-4), start, nextColour,fourInksPatternLeft);
+                        else
+                            temporaryShelf = naive(moveRight(shelf, start), start, nextColour,fourInksPatternLeft);
                     } else {
                         if (index - position >=
                             start)                             //jezeli nasz pojemnik jest odpowiednio oddalony od punktu startu (mozemy stworzyc czworke
