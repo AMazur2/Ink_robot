@@ -3,10 +3,24 @@
 #include "Robot.hpp"
 
 
-void runTestFromString(std::string expected, std::string input) {
+void runTestFromStringNaive(std::string expected, std::string input) {
     Shelf* shelf = Shelf::getShelfFromSring(input);
     Robot r;
     r.naiveSolver(shelf);
+//    std::cout<<"Expected: ";
+//    std::cout<<expected;
+//    std::cout<<std::endl;
+//    std::cout<<"Actual:   ";
+//    shelf->showShelf();
+//    std::cout<<std::endl;
+
+    assert(expected==shelf->ShelfToString());
+}
+
+void runTestFromStringPosition(std::string expected, std::string input) {
+    Shelf* shelf = Shelf::getShelfFromSring(input);
+    Robot r;
+    r.positionSolver(shelf);
 //    std::cout<<"Expected: ";
 //    std::cout<<expected;
 //    std::cout<<std::endl;
@@ -23,8 +37,10 @@ int main(int argc, char *argv[]) {
 //    runTestFromString("CYMYKYMK","KYMKCYMY");
 //    runTestFromString("CKYKMYKK","MYKCKYKK");
 
-    runTestFromString("CMYK","CMYK");
-    runTestFromString("CMYKYMKY","KYMKCYMY");
-    runTestFromString("CMYKKYKK","MYKCKYKK");
+    runTestFromStringNaive("CMYK","CMYK");
+    runTestFromStringNaive("CMYKYMKY","KYMKCYMY");
+    runTestFromStringNaive("CMYKKYKK","MYKCKYKK");
+
+    runTestFromStringPosition("CMYK","CMYK");
 
 }

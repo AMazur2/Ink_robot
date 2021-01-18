@@ -452,8 +452,9 @@ Robot::naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatt
         {
             if (start + 1 < shelf.size()) {       //jezeli istnieje nastepny pojemnik to rekursywnie przechodzimy dalej
                 if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
-                    fourInksPatternLeft--;
-                temporaryShelf = naive(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
+                    temporaryShelf = naive(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
+                else
+                    temporaryShelf = naive(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
             } else                                                                //jezeli nie to zwracamy obecną półkę
                 return shelf;
         } else {
@@ -476,9 +477,10 @@ Robot::naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatt
                 std::vector<Ink> temp;                                          //pomocniczy wektor
                 if ((index) % 4 == nextColour) {     //jezeli pojemnik jest na poprawnym miejscu, majac pod uwaga miejsca w czworkach
                     if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
-                        fourInksPatternLeft--;
+                        temporaryShelf = naive(moveLeft(shelf, start, index - 1), start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
                     //przesuwamy wszystkie czworki miedzy obecnym poczatkiem a pojemnikiem
-                    temporaryShelf = naive(moveLeft(shelf, start, index - 1), start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
+                    else
+                        temporaryShelf = naive(moveLeft(shelf, start, index - 1), start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
                 }else {
                     int position = 0;                                           //miejsce w przenoszonej czworce
                     bool notFound = true;
@@ -503,8 +505,9 @@ Robot::naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatt
                             std::vector<Ink> temp = moveRight(shelf, index - position);
                             temp = moveLeft(temp, start, shelf.size() - 5 + position); //przenosimy ta czworke na prawo a potem przesuwamy
                             if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
-                                fourInksPatternLeft--;
-                             temporaryShelf = naive(temp, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);      //tak aby nasz pojemnik byl na miejscu 'start' i kontynuujemy algorytm
+                                temporaryShelf = naive(temp, start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
+                            else
+                                temporaryShelf = naive(temp, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);      //tak aby nasz pojemnik byl na miejscu 'start' i kontynuujemy algorytm
                         } else                                                    //pojemnik jest zbyt blisko startu wiec musimy go oddalic
                         {                                                       //przenosimy czworke zaczynajac od pojemnika znajdujacego sie na pozycji 'start'
                             int newPosition = shelf.size() - 4 + index -
@@ -512,8 +515,10 @@ Robot::naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatt
                             std::vector<Ink> temp = moveRight(moveRight(shelf, start), newPosition -
                                                                                        position);   //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
                             if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
-                                fourInksPatternLeft--;
-                            temporaryShelf = naive(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
+                                temporaryShelf = naive(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
+                                                       (nextColour + 1) % 4, fourInksPatternLeft-1);
+                            else
+                                temporaryShelf = naive(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
                                                          (nextColour + 1) % 4, fourInksPatternLeft);    //na koniec doprowadzamy nasz pojemnik
                         }                                                       //na pozycje 'start' i kontynuujemy algorytm
                     }
@@ -559,14 +564,28 @@ std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextCol
     else if (shelf.size() - start <= 4)
         return shelf;
     else {
+        int indexOfWantedColour = -1;
+        indexOfWantedColour = findIndexOfWantedColourIfDivisibleByFour(start, shelf, this->types[nextColour]);
+
+        if (indexOfWantedColour != -1){
+            if (indexOfWantedColour != start)
+                shelf = moveLeft(shelf, start, indexOfWantedColour - 1);
+            if(this->types[nextColour] == 'K')
+                positions(shelf,start+1,(nextColour+1)%4,fourInksPatternLeft-1);
+            else
+                positions(shelf,start+1,(nextColour+1)%4,fourInksPatternLeft);
+        }
+
+
 
         std::vector<Ink> temporaryShelf;
         if (shelf[start].getColour() == types[nextColour])  // od razu mamy odpowiedni pojemnik na miejscu
         {
             if (start + 1 < shelf.size()) {       //jezeli istnieje nastepny pojemnik to rekursywnie przechodzimy dalej
                 if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
-                    fourInksPatternLeft--;
-                temporaryShelf = positions(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
+                    temporaryShelf = positions(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
+                else
+                    temporaryShelf = positions(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
             } else                                                                //jezeli nie to zwracamy obecną półkę
                 return shelf;
         } else {
@@ -589,9 +608,10 @@ std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextCol
                 std::vector<Ink> temp;                                          //pomocniczy wektor
                 if ((index) % 4 == nextColour) {     //jezeli pojemnik jest na poprawnym miejscu, majac pod uwaga miejsca w czworkach
                     if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
-                        fourInksPatternLeft--;
-                    //przesuwamy wszystkie czworki miedzy obecnym poczatkiem a pojemnikiem
-                    temporaryShelf = positions(moveLeft(shelf, start, index - 1), start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
+                        temporaryShelf = positions(moveLeft(shelf, start, index - 1), start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
+                        //przesuwamy wszystkie czworki miedzy obecnym poczatkiem a pojemnikiem
+                    else
+                        temporaryShelf = positions(moveLeft(shelf, start, index - 1), start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
                 }else {
                     int position = 0;                                           //miejsce w przenoszonej czworce
                     bool notFound = true;
@@ -605,7 +625,10 @@ std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextCol
 
                     if (index > shelf.size() - 4 + position) //jezeli nie mozemy zrobic takiej czworki aby dany pojemnik byl na odpowiednim miejscu
                     {       //przenosimy poprzedzajaca czworke (przypadek ze pojemnik jest za daleko na prawo aby go przeniesc)
-                        temporaryShelf = positions(moveRight(shelf, index - 4), start, nextColour, fourInksPatternLeft);
+                        if(index-4>start)
+                            temporaryShelf = positions(moveRight(shelf, index-4), start, nextColour,fourInksPatternLeft);
+                        else
+                            temporaryShelf = positions(moveRight(shelf, start), start, nextColour,fourInksPatternLeft);
                     } else {
                         if (index - position >=
                             start)                             //jezeli nasz pojemnik jest odpowiednio oddalony od punktu startu (mozemy stworzyc czworke
@@ -613,8 +636,9 @@ std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextCol
                             std::vector<Ink> temp = moveRight(shelf, index - position);
                             temp = moveLeft(temp, start, shelf.size() - 5 + position); //przenosimy ta czworke na prawo a potem przesuwamy
                             if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
-                                fourInksPatternLeft--;
-                            temporaryShelf = positions(temp, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);      //tak aby nasz pojemnik byl na miejscu 'start' i kontynuujemy algorytm
+                                temporaryShelf = positions(temp, start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
+                            else
+                                temporaryShelf = positions(temp, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);      //tak aby nasz pojemnik byl na miejscu 'start' i kontynuujemy algorytm
                         } else                                                    //pojemnik jest zbyt blisko startu wiec musimy go oddalic
                         {                                                       //przenosimy czworke zaczynajac od pojemnika znajdujacego sie na pozycji 'start'
                             int newPosition = shelf.size() - 4 + index -
@@ -622,9 +646,11 @@ std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextCol
                             std::vector<Ink> temp = moveRight(moveRight(shelf, start), newPosition -
                                                                                        position);   //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
                             if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
-                                fourInksPatternLeft--;
-                            temporaryShelf = positions(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
-                                                   (nextColour + 1) % 4, fourInksPatternLeft);    //na koniec doprowadzamy nasz pojemnik
+                                temporaryShelf = positions(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
+                                                       (nextColour + 1) % 4, fourInksPatternLeft-1);
+                            else
+                                temporaryShelf = positions(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
+                                                       (nextColour + 1) % 4, fourInksPatternLeft);    //na koniec doprowadzamy nasz pojemnik
                         }                                                       //na pozycje 'start' i kontynuujemy algorytm
                     }
 
@@ -634,6 +660,8 @@ std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextCol
                 return shelf;
         }
         return temporaryShelf;
+
+
 
     }
 
