@@ -109,4 +109,12 @@ void Shelf::showShelf()
     std::cout << std::endl;
 }
 
+std::string Shelf::ShelfToString()
+{
+    std::string result;
+    for(int i = 0; i < shelf.size(); i++)
+        result += shelf[i].getColour();
+    return result;
+}
+
 

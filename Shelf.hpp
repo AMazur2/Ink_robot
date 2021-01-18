@@ -26,6 +26,7 @@ class Shelf
         static Shelf*  getShelfFromSring(std::string s);
         static Shelf*  getShelfFromFile(std::string fileName);
 
+    std::string ShelfToString();
 };
 
 #endif
