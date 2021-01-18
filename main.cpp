@@ -31,6 +31,7 @@ void solve(Shelf shelf, string outFileName, string solver)
     else if (solver == "naive")
     {
         r.naiveSolver(&shelf);
+        shelf.showShelf();
         return;
     }
     else if (solver == "substring")

@@ -8,6 +8,7 @@ class Robot
 {
     private:
         char types[4] = {'C', 'M', 'Y', 'K'};
+        int robotMoves;
         int findNumber(std::vector<Ink> shelf);
         std::vector<int> findFours(std::vector<Ink> shelf);
         std::vector<Ink> moveRight(std::vector<Ink> shelf, int start);
@@ -21,7 +22,7 @@ class Robot
 
 
     public:
-        Robot() {};
+        Robot();
         ~Robot() {};
         void brutalSolver(Shelf *shelf);
         void naiveSolver(Shelf *shelf);
@@ -37,10 +38,11 @@ class Robot
     findOther(int startIndex, std::vector<Ink> shelf, char colour, int *whereToMoveRightIndex,
               int *indexOfWantedColour);
 
-    std::vector<Ink> naive(std::vector<Ink> shelf, int start, char wantedColour, int fourInksPatternLeft);
+//    std::vector<Ink> naive(std::vector<Ink> shelf, int start, char wantedColour, int fourInksPatternLeft);
 
     std::vector<Ink> moveWantedColorToCorrectPlace(std::vector<Ink> shelf, int start, char wantedColour, int left);
 
+    std::vector<Ink> naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatternLeft);
 };
 
 #endif

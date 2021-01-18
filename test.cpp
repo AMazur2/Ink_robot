@@ -19,8 +19,12 @@ void runTestFromString(std::string expected, std::string input) {
 
 int main(int argc, char *argv[]) {
 
+//    runTestFromString("CMYK","CMYK");
+//    runTestFromString("CYMYKYMK","KYMKCYMY");
+//    runTestFromString("CKYKMYKK","MYKCKYKK");
+
     runTestFromString("CMYK","CMYK");
-    runTestFromString("CYMYKYMK","KYMKCYMY");
-    runTestFromString("CKYKMYKK","MYKCKYKK");
+    runTestFromString("CMYKYMKY","KYMKCYMY");
+    runTestFromString("CMYKKYKK","MYKCKYKK");
 
 }
