@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Shelf.hpp"
 
 
@@ -115,6 +116,52 @@ std::string Shelf::ShelfToString()
     for(int i = 0; i < shelf.size(); i++)
         result += shelf[i].getColour();
     return result;
+}
+
+bool Shelf::checkIfSorted(std::string shelf) {
+    int firstNotFour = -1, i = 3;
+    while(i < shelf.size() && firstNotFour == -1){
+        char c = shelf[i-3];
+        char m = shelf[i-2];
+        char y = shelf[i-1];
+        char k = shelf[i-0];
+        if( !(c=='C' && m=='M' && y=='Y' && k=='K') )
+            firstNotFour = i - 3;
+        i+=4;
+    }
+
+    int howManyLeft = shelf.size() - firstNotFour;
+    if(howManyLeft <= 4)
+        return true;
+    else{
+        int minFromLetters = countLetters(shelf,firstNotFour);
+        return minFromLetters == 0;
+    }
+
+}
+
+int Shelf::countLetters(std::string shelf, int start) {
+    int c=0, m=0, y=0, k=0;
+    for(int i = start; i < shelf.length(); i++){
+        switch (shelf[i]) {
+            case 'C':
+                c++;
+                break;
+            case 'M':
+                m++;
+                break;
+            case 'Y':
+                y++;
+                break;
+            case 'K':
+                k++;
+                break;
+            default:
+                std::cout<<"shelf contains letter other than CMYK";
+                exit(1);
+        }
+    }
+    return std::min(c, std::min(m, std::min(y, k)));
 }
 
 

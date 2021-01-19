@@ -27,6 +27,10 @@ class Shelf
         static Shelf*  getShelfFromFile(std::string fileName);
 
     std::string ShelfToString();
+
+    static bool checkIfSorted(std::string shelf);
+
+    static int countLetters(std::string shelf, int start);
 };
 
 #endif
