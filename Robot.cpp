@@ -544,15 +544,65 @@ void Robot::showVariables(int start, int nextColour, int toSort, char wantedColo
     std::cout << "nextColour: " << nextColour << std::endl;
 }
 
+int Robot::findFirstWantedPositionInFour(std::vector<Ink> shelf, int start, int first) {
+    int inksLeft = shelf.size() - start;
+    int inksWithoutFour = inksLeft - 4;
+    if(inksLeft <= 4)
+        return -1;
+    int restFromDeviding = inksWithoutFour % 4;
+    int howManyBefore = (4 - restFromDeviding) % 4;
+    if(first - howManyBefore < start)
+        return -2;
+    return howManyBefore;
+}
+
+int Robot::findHowManyFoursSorted(std::vector<Ink> shelf, int start, int toSort, int substringLength) {
+    int sorted = 0;
+    for(int i = start; i < start + substringLength; i++){
+        if(shelf[i].getColour() == 'C')
+            sorted++;
+    }
+    return toSort-sorted;
+}
+
 std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int toSort) //TODO: algorytm
 {
     if (toSort == 0)
         return shelf;
     else {
-        std::pair<int, int> p = findMaximalSubstring(shelf, start,
-                                                     nextColour);     //p.first - zawiera w sobie informacje o poczatku najdluzszego podciagu
-        std::cout << "TODO: maximal substring algorithm"
-                  << std::endl;              //p.second - informuje jak dlugi jest ten podciag
+        //p.first - zawiera w sobie informacje o poczatku najdluzszego podciagu
+        //p.second - informuje jak dlugi jest ten podciag
+        std::pair<int, int> p = findMaximalSubstring(shelf, start,nextColour);
+
+        int firstPosition = findFirstWantedPositionInFour(shelf,start,p.first);//first position can be equal to 0, 1, 2 or 3
+        std::cout << p.first<<" "<< p.second<<" "<< firstPosition<<std::endl;
+        if(firstPosition == -1)//there are 4 or less inks left
+            return shelf;
+        if(firstPosition != -2){//I can move Substring to correct place
+            int startMovingRight = p.first-firstPosition;
+            int howManyInksLeftFromSubstring = p.second + firstPosition;
+            int fromWhereToMoveLeft = shelf.size() + firstPosition;
+            while (howManyInksLeftFromSubstring > 0){
+                fromWhereToMoveLeft -= 4;
+                howManyInksLeftFromSubstring -= 4;
+                shelf = moveRight(shelf,startMovingRight);
+            }
+            shelf = moveLeft(shelf,start, fromWhereToMoveLeft - 1);
+            return maximalSubstring(shelf, start+p.second, (nextColour + 1) % 4, findHowManyFoursSorted(shelf,start,toSort,p.second));
+        } else { //przesuń ciąg na koniec
+            int howManyBeforeSubstring = p.first - start;
+            int whereIsStartSubstring = shelf.size() + howManyBeforeSubstring;
+            int howManyInksLeftFromSubstring = p.second + howManyBeforeSubstring;
+            while(howManyInksLeftFromSubstring > 0){
+                howManyInksLeftFromSubstring -= 4;
+                whereIsStartSubstring -=4;
+                moveRight(shelf,start);
+            }
+            if(whereIsStartSubstring - firstPosition >= start){//jest odpowiednio dużo fiolek przed podciągiem
+                //TODO
+            }
+        }
+
         return shelf;                                                               //to co nalezy teraz zorbic to ulozyc ten podciag na odpowiednim miejscu
     }                                                                               //i podac odpowiednie parametry do rekursji
 }
@@ -738,6 +788,10 @@ void Robot::positionSolver(Shelf *shelf) {
 int Robot::getRobotMoves() const {
     return robotMoves;
 }
+
+
+
+
 
 
 

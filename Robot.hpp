@@ -47,6 +47,10 @@ private:
     std::vector<Ink> moveWantedColorToCorrectPlace(std::vector<Ink> shelf, int start, char wantedColour, int left);
 
     std::vector<Ink> naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatternLeft);
+
+    int findFirstWantedPositionInFour(std::vector<Ink> shelf, int start, int first);
+
+    int findHowManyFoursSorted(std::vector<Ink> shelf, int start, int toSort, int substringLength);
 };
 
 #endif
