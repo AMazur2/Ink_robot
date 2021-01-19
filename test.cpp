@@ -9,21 +9,28 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
-#include <thread>
 
 using namespace std;
 
-void writeResultsToFile(std::string fileName, int index, int duration, int robotMoves){//TODO
-//    std::string s = fileName + std::to_string(index);
-////    std::cout<<s<<std::endl;
-//    std::ofstream zapis(s);
-//    zapis << duration << ";" << robotMoves << std::endl;
-//    zapis.close();
+void writeResultsToFile(std::string fileName, int index, int duration, int robotMoves){
+    std::string s = fileName + std::to_string(index);
+    fstream file;
+    file.open(s,std::ios::out);
+    file << robotMoves << ";" << duration;
+    file.close();
+}
 
-    ofstream outfile;
-    outfile.open(fileName);
-    outfile << duration << endl;
-    outfile.close();
+void runTestFromStringNaive(std::string expected, std::string input, int index) {
+    Shelf* shelf = Shelf::getShelfFromSring(input);
+    Robot r;
+
+    auto start = std::chrono::high_resolution_clock::now();//start measuring time
+    r.naiveSolver(shelf);
+    auto finish = std::chrono::high_resolution_clock::now();//finish measuring time
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
+
+    writeResultsToFile("../Results/Naive/out",index,duration.count(),r.getRobotMoves());
+    assert(expected==shelf->ShelfToString());
 }
 
 void runTestFromStringMaximalSubstring(std::string expected, std::string input, int index) {
@@ -46,18 +53,7 @@ void runTestFromStringMaximalSubstring(std::string expected, std::string input, 
 //    assert(expected==shelf->ShelfToString());
 }
 
-void runTestFromStringNaive(std::string expected, std::string input, int index) {
-    Shelf* shelf = Shelf::getShelfFromSring(input);
-    Robot r;
-    srand (time(NULL));
-    auto start = std::chrono::high_resolution_clock::now();//start measuring time
-    r.naiveSolver(shelf);
-    auto finish = std::chrono::high_resolution_clock::now();//finish measuring time
-    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
 
-    writeResultsToFile("out",index,duration.count(),r.getRobotMoves());
-    assert(expected==shelf->ShelfToString());
-}
 
 void runTestFromStringPosition(std::string expected, std::string input) {
     Shelf* shelf = Shelf::getShelfFromSring(input);
@@ -85,17 +81,17 @@ int main(int argc, char *argv[]) {
 //    runTestFromString("CKYKMYKK","MYKCKYKK");
 
 //    std::cout<<"naive"<<std::endl;
-//    runTestFromStringNaive("CMYK","CMYK",1);
-//    runTestFromStringNaive("CMYKYMKY","KYMKCYMY",2);
-//    runTestFromStringNaive("CMYKKYKK","MYKCKYKK",3);
+    runTestFromStringNaive("CMYK","CMYK",1);
+    runTestFromStringNaive("CMYKYMKY","KYMKCYMY",2);
+    runTestFromStringNaive("CMYKKYKK","MYKCKYKK",3);
 //
 //    std::cout<<"position"<<std::endl;
 //    runTestFromStringPosition("CMYK","CMYK");
 
-    std::cout<<"Maximal Substring"<<std::endl;
-//    runTestFromStringMaximalSubstring("CMYK","CMYK",1);
-    runTestFromStringMaximalSubstring("KMKKCMYMMM","KKKCMYMMMM",2);
-    runTestFromStringMaximalSubstring("KMKKCMYMMM","KKKCYMMMM",2);
-    runTestFromStringMaximalSubstring("CMYMMMKMKK","KKKCMYMMMM",3);
+//    std::cout<<"Maximal Substring"<<std::endl;
+////    runTestFromStringMaximalSubstring("CMYK","CMYK",1);
+//    runTestFromStringMaximalSubstring("KMKKCMYMMM","KKKCMYMMMM",2);
+//    runTestFromStringMaximalSubstring("KMKKCMYMMM","KKKCYMMMM",2);
+//    runTestFromStringMaximalSubstring("CMYMMMKMKK","KKKCMYMMMM",3);
 
 }
