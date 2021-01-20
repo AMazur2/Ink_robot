@@ -57,6 +57,8 @@ private:
                                 int firstPosition);
 
     bool ifSubstringCanBeMoved(int shelfSize, int start, std::pair<int, int> substring, int firstPosition);
+
+    bool firstIsOnDivisiblePosition(std::vector<Ink> shelf, int start, int firstIndex);
 };
 
 #endif

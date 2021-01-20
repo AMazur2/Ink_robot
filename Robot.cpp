@@ -601,6 +601,12 @@ std::vector<Ink> Robot::moveSubstringAtTheEnd(std::vector<Ink> shelf, int start,
     return shelf;
 }
 
+bool Robot::firstIsOnDivisiblePosition(std::vector<Ink> shelf, int start, int firstIndex) {
+    if((firstIndex - start) % 4 == 0)
+        return true;
+    return false;
+}
+
 std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatternLeft) //TODO: algorytm
 {
     if (fourInksPatternLeft == 0)
@@ -616,6 +622,12 @@ std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int 
         //p.second - informuje jak dlugi jest ten podciag
         std::pair<int, int> p = findMaximalSubstring(shelf, start, nextColour);
 
+        if(firstIsOnDivisiblePosition(shelf,start,p.first)){
+            shelf = moveLeft(shelf,start,p.first-1);
+            int toSort = findHowManyFoursSorted(shelf, start, fourInksPatternLeft, p.second);
+            return maximalSubstring(shelf, start+p.second, (nextColour + p.second) % 4, toSort);
+        }
+
         int firstPosition = findFirstWantedPositionInFour(shelf,start,p.first);//first position can be equal to 0, 1, 2 or 3
 //        std::cout << p.first<<" "<< p.second<<" "<< firstPosition<<std::endl;
         if(firstPosition == -1)//there are 4 or less inks left
@@ -623,7 +635,7 @@ std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int 
         if(ifSubstringCanBeMoved(shelf.size(), start, p, firstPosition)){
             shelf = moveSubstringToCorrectPlace(shelf, start, &p, firstPosition);
             int toSort = findHowManyFoursSorted(shelf, start, fourInksPatternLeft, p.second);
-            return maximalSubstring(shelf, start+p.second, (nextColour + 1) % 4, toSort);
+            return maximalSubstring(shelf, start+p.second, (nextColour + p.second) % 4, toSort);
         } else {
 //            shelf = moveSubstringAtTheEnd(shelf,start,&p);
 //            firstPosition = findFirstWantedPositionInFour(shelf,start,p.first);//first position can be equal to 0, 1, 2 or 3
@@ -912,6 +924,8 @@ void Robot::positionSolver(Shelf *shelf) {
 int Robot::getRobotMoves() const {
     return robotMoves;
 }
+
+
 
 
 
