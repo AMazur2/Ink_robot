@@ -135,7 +135,13 @@ bool Shelf::checkIfSorted(std::string shelf) {
         return true;
     else{
         int minFromLetters = countLetters(shelf,firstNotFour);
-        return minFromLetters == 0;
+        if(minFromLetters == 0)
+            return true;
+        else{
+            std::cout<<shelf;
+            std::cout.flush();
+            return false;
+        }
     }
 
 }

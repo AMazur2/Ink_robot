@@ -21,7 +21,7 @@ private:
         std::pair<int, int> findMaximalSubstring (std::vector<Ink> shelf, int start, int colour);
         std::vector<Ink> brutalForce(std::vector<Ink> shelf, int start, int nextColour);
 //        std::vector<Ink> naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatternLeft);
-        std::vector<Ink> maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int toSort);
+        std::vector<Ink> maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatternLeft);
         std::vector<Ink> positions(std::vector<Ink> shelf, int start, int nextColour, int toSort);
 
 
@@ -42,8 +42,6 @@ private:
     findOther(int startIndex, std::vector<Ink> shelf, char colour, int *whereToMoveRightIndex,
               int *indexOfWantedColour);
 
-//    std::vector<Ink> naive(std::vector<Ink> shelf, int start, char wantedColour, int fourInksPatternLeft);
-
     std::vector<Ink> moveWantedColorToCorrectPlace(std::vector<Ink> shelf, int start, char wantedColour, int left);
 
     std::vector<Ink> naive(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatternLeft);
@@ -51,6 +49,14 @@ private:
     int findFirstWantedPositionInFour(std::vector<Ink> shelf, int start, int first);
 
     int findHowManyFoursSorted(std::vector<Ink> shelf, int start, int toSort, int substringLength);
+
+    std::vector<Ink> moveSubstringAtTheEnd(std::vector<Ink> shelf, int start, std::pair<int, int> *substring);
+
+    std::vector<Ink>
+    moveSubstringToCorrectPlace(std::vector<Ink> shelf, int start, std::pair<int, int> *substring,
+                                int firstPosition);
+
+    bool ifSubstringCanBeMoved(int shelfSize, int start, std::pair<int, int> substring, int firstPosition);
 };
 
 #endif

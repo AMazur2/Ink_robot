@@ -37,21 +37,15 @@ void runTestFromStringNaive(std::string expected, std::string input, int index) 
 void runTestFromStringMaximalSubstring(std::string expected, std::string input, int index) {
     Shelf* shelf = Shelf::getShelfFromSring(input);
     Robot r;
-    srand (time(NULL));
+
     auto start = std::chrono::high_resolution_clock::now();//start measuring time
     r.maximalSubstringSolver(shelf);
     auto finish = std::chrono::high_resolution_clock::now();//finish measuring time
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
 
-    std::cout<<"Expected: ";
-    std::cout<<expected;
-    std::cout<<std::endl;
-    std::cout<<"Actual:   ";
-    shelf->showShelf();
-    std::cout<<std::endl;
-
-    writeResultsToFile("out",index,duration.count(),r.getRobotMoves());
-//    assert(expected==shelf->ShelfToString());
+    assert (Shelf::checkIfSorted(shelf->ShelfToString()));
+    writeResultsToFile("../Results/Substring/out",index,duration.count(),r.getRobotMoves());
+    assert(expected==shelf->ShelfToString());
 }
 
 
@@ -90,8 +84,9 @@ int main(int argc, char *argv[]) {
 //    runTestFromStringPosition("CMYK","CMYK");
 
 //    std::cout<<"Maximal Substring"<<std::endl;
-////    runTestFromStringMaximalSubstring("CMYK","CMYK",1);
-//    runTestFromStringMaximalSubstring("KMKKCMYMMM","KKKCMYMMMM",2);
+//    runTestFromStringMaximalSubstring("","CMYK",1);
+//    runTestFromStringMaximalSubstring("CMYKCMKKKKKK","KKKCMYKCMKKK",2);
+    runTestFromStringMaximalSubstring("","YYYCMYKCMKKK",2);
 //    runTestFromStringMaximalSubstring("KMKKCMYMMM","KKKCYMMMM",2);
 //    runTestFromStringMaximalSubstring("CMYMMMKMKK","KKKCMYMMMM",3);
 

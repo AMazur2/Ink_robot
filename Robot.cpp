@@ -551,58 +551,182 @@ int Robot::findFirstWantedPositionInFour(std::vector<Ink> shelf, int start, int 
         return -1;
     int restFromDeviding = inksWithoutFour % 4;
     int howManyBefore = (4 - restFromDeviding) % 4;
-    if(first - howManyBefore < start)
-        return -2;
     return howManyBefore;
 }
 
 int Robot::findHowManyFoursSorted(std::vector<Ink> shelf, int start, int toSort, int substringLength) {
     int sorted = 0;
     for(int i = start; i < start + substringLength; i++){
-        if(shelf[i].getColour() == 'C')
+        if(shelf[i].getColour() == 'K')
             sorted++;
     }
     return toSort-sorted;
 }
 
-std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int toSort) //TODO: algorytm
+std::vector<Ink> Robot::moveSubstringToCorrectPlace(std::vector<Ink> shelf, int start, std::pair<int, int> *substring,
+                                                    int firstPosition) {
+    int startMovingRight = (*substring).first - firstPosition;
+    int howManyInksLeftFromSubstring = (*substring).second + firstPosition;
+    int fromWhereToMoveLeft = shelf.size() + firstPosition;
+    while (howManyInksLeftFromSubstring > 0){
+        fromWhereToMoveLeft -= 4;
+        howManyInksLeftFromSubstring -= 4;
+        shelf = moveRight(shelf, startMovingRight);
+    }
+    shelf = moveLeft(shelf, start, fromWhereToMoveLeft - 1);
+    (*substring).first = start;
+    return shelf;
+}
+
+bool Robot::ifSubstringCanBeMoved(int shelfSize, int start, std::pair<int, int> substring, int firstPosition) {
+    int x = (firstPosition + substring.second) % 4;
+    int endOfMovingSubstring = 4 - x;
+    if(substring.first - firstPosition < start)
+        return false;
+    else if (substring.first + substring.second + endOfMovingSubstring >= shelfSize)
+        return false;
+    return true;
+}
+
+std::vector<Ink> Robot::moveSubstringAtTheEnd(std::vector<Ink> shelf, int start, std::pair<int, int> *substring) {
+    int howManyBeforeSubstring = (*substring).first - start;
+    int whereIsStartSubstring = shelf.size() + howManyBeforeSubstring;
+    int howManyInksLeftFromSubstring = (*substring).second + howManyBeforeSubstring;
+    while(howManyInksLeftFromSubstring > 0){
+        howManyInksLeftFromSubstring -= 4;
+        whereIsStartSubstring -=4;
+        shelf = moveRight(shelf,start);
+    }
+    (*substring).first = whereIsStartSubstring;
+    return shelf;
+}
+
+std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int nextColour, int fourInksPatternLeft) //TODO: algorytm
 {
-    if (toSort == 0)
+    if (fourInksPatternLeft == 0)
         return shelf;
     else {
+        if(shelf[start].getColour() == this->types[nextColour]) {
+            if (this->types[nextColour] == 'K')
+                return maximalSubstring(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft - 1);
+            else
+                return maximalSubstring(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
+        }
         //p.first - zawiera w sobie informacje o poczatku najdluzszego podciagu
         //p.second - informuje jak dlugi jest ten podciag
-        std::pair<int, int> p = findMaximalSubstring(shelf, start,nextColour);
+        std::pair<int, int> p = findMaximalSubstring(shelf, start, nextColour);
 
         int firstPosition = findFirstWantedPositionInFour(shelf,start,p.first);//first position can be equal to 0, 1, 2 or 3
-        std::cout << p.first<<" "<< p.second<<" "<< firstPosition<<std::endl;
+//        std::cout << p.first<<" "<< p.second<<" "<< firstPosition<<std::endl;
         if(firstPosition == -1)//there are 4 or less inks left
             return shelf;
-        if(firstPosition != -2){//I can move Substring to correct place
-            int startMovingRight = p.first-firstPosition;
-            int howManyInksLeftFromSubstring = p.second + firstPosition;
-            int fromWhereToMoveLeft = shelf.size() + firstPosition;
-            while (howManyInksLeftFromSubstring > 0){
-                fromWhereToMoveLeft -= 4;
-                howManyInksLeftFromSubstring -= 4;
-                shelf = moveRight(shelf,startMovingRight);
-            }
-            shelf = moveLeft(shelf,start, fromWhereToMoveLeft - 1);
-            return maximalSubstring(shelf, start+p.second, (nextColour + 1) % 4, findHowManyFoursSorted(shelf,start,toSort,p.second));
-        } else { //przesuń ciąg na koniec
-            int howManyBeforeSubstring = p.first - start;
-            int whereIsStartSubstring = shelf.size() + howManyBeforeSubstring;
-            int howManyInksLeftFromSubstring = p.second + howManyBeforeSubstring;
-            while(howManyInksLeftFromSubstring > 0){
-                howManyInksLeftFromSubstring -= 4;
-                whereIsStartSubstring -=4;
-                moveRight(shelf,start);
-            }
-            if(whereIsStartSubstring - firstPosition >= start){//jest odpowiednio dużo fiolek przed podciągiem
-                //TODO
-            }
-        }
+        if(ifSubstringCanBeMoved(shelf.size(), start, p, firstPosition)){
+            shelf = moveSubstringToCorrectPlace(shelf, start, &p, firstPosition);
+            int toSort = findHowManyFoursSorted(shelf, start, fourInksPatternLeft, p.second);
+            return maximalSubstring(shelf, start+p.second, (nextColour + 1) % 4, toSort);
+        } else {
+//            shelf = moveSubstringAtTheEnd(shelf,start,&p);
+//            firstPosition = findFirstWantedPositionInFour(shelf,start,p.first);//first position can be equal to 0, 1, 2 or 3
+//            if(p.first - firstPosition >= start){//jest odpowiednio dużo fiolek przed podciągiem
+//                //TODO
+//            } else {
+//                shelf = sortOneNormally(shelf, start, nextColour, fourInksPatternLeft);
+//            }
 
+            if (fourInksPatternLeft == 0)
+                return shelf;
+            else if (shelf.size() - start <= 4)
+                return shelf;
+            else {
+
+                std::vector<Ink> temporaryShelf;
+                if (shelf[start].getColour() == types[nextColour])  // od razu mamy odpowiedni pojemnik na miejscu
+                {
+                    if (start + 1 < shelf.size()) {       //jezeli istnieje nastepny pojemnik to rekursywnie przechodzimy dalej
+                        if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
+                            temporaryShelf = naive(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
+                        else
+                            temporaryShelf = naive(shelf, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
+                    } else                                                                //jezeli nie to zwracamy obecną półkę
+                        return shelf;
+                } else {
+                    if (shelf.size() - start > 4)     //pozostala ilosc pojemnikow musi byc wieksza od 4
+                    {                                //aby mozna bylo dokonac jakichkolwiek zmian w ciagu
+                        bool notFound = true;
+                        int index = start;             //miejsce najblizszego pojemnika ktory powinien byc nastepny
+                        while (notFound)               //znajdujemy najblizszy pojemnik ktory powinien byc nastepny
+                        {
+                            if (index < shelf.size()) {
+                                if (shelf[index].getColour() == types[nextColour])
+                                    notFound = false;
+                                else
+                                    index++;
+                            } else                                                        //nie znalezlismy - zwracamy półkę i koniec algorytmu
+                                return shelf;
+
+                        }
+
+                        std::vector<Ink> temp;                                          //pomocniczy wektor
+                        if ((index) % 4 == nextColour) {     //jezeli pojemnik jest na poprawnym miejscu, majac pod uwaga miejsca w czworkach
+                            if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
+                                temporaryShelf = naive(moveLeft(shelf, start, index - 1), start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
+                                //przesuwamy wszystkie czworki miedzy obecnym poczatkiem a pojemnikiem
+                            else
+                                temporaryShelf = naive(moveLeft(shelf, start, index - 1), start + 1, (nextColour + 1) % 4, fourInksPatternLeft);
+                        }else {
+                            int position = 0;                                           //miejsce w przenoszonej czworce
+                            bool notFound = true;
+                            while (notFound)                                             //sprawdzamy na jakiej pozycji (majac na uwadze ostatnie 4 miejsca) powinien byc pojemnik
+                            {                                                           //aby mozna bylo poprawnie go przeniesc
+                                if ((shelf.size() - 4 + position) % 4 == nextColour)
+                                    notFound = false;
+                                else
+                                    position++;
+                            }
+
+                            if (index > shelf.size() - 4 + position) //jezeli nie mozemy zrobic takiej czworki aby dany pojemnik byl na odpowiednim miejscu
+                            {       //przenosimy poprzedzajaca czworke (przypadek ze pojemnik jest za daleko na prawo aby go przeniesc)
+                                if(index-4>start)
+                                    temporaryShelf = naive(moveRight(shelf, index-4), start, nextColour,fourInksPatternLeft);
+                                else
+                                    temporaryShelf = naive(moveRight(shelf, start), start, nextColour,fourInksPatternLeft);
+                            } else {
+                                if (index - position >=
+                                    start)                             //jezeli nasz pojemnik jest odpowiednio oddalony od punktu startu (mozemy stworzyc czworke
+                                {                             //w ktorej pojemnik bedzie na odpowiednim miejscu)
+                                    std::vector<Ink> temp = moveRight(shelf, index - position);
+                                    temp = moveLeft(temp, start, shelf.size() - 5 + position); //przenosimy ta czworke na prawo a potem przesuwamy
+                                    if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
+                                        temporaryShelf = naive(temp, start + 1, (nextColour + 1) % 4, fourInksPatternLeft-1);
+                                    else
+                                        temporaryShelf = naive(temp, start + 1, (nextColour + 1) % 4, fourInksPatternLeft);      //tak aby nasz pojemnik byl na miejscu 'start' i kontynuujemy algorytm
+                                } else                                                    //pojemnik jest zbyt blisko startu wiec musimy go oddalic
+                                {                                                       //przenosimy czworke zaczynajac od pojemnika znajdujacego sie na pozycji 'start'
+                                    int newPosition = shelf.size() - 4 + index -
+                                                      start;       //obliczamy nowa pozycje naszego pojemnika i wtedy gdy mamy juz na pewno wystarczajaca ilosc
+                                    std::vector<Ink> temp = moveRight(moveRight(shelf, start), newPosition -
+                                                                                               position);   //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
+                                    if(this->types[nextColour] == 'K')//zakończona czwórka więc zmniejszamy fourInksPatternLeft
+                                        temporaryShelf = naive(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
+                                                               (nextColour + 1) % 4, fourInksPatternLeft-1);
+                                    else
+                                        temporaryShelf = naive(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
+                                                               (nextColour + 1) % 4, fourInksPatternLeft);    //na koniec doprowadzamy nasz pojemnik
+                                }                                                       //na pozycje 'start' i kontynuujemy algorytm
+                            }
+
+                        }
+
+                    } else
+                        return shelf;
+                }
+                return temporaryShelf;
+            }
+
+
+
+
+        }
         return shelf;                                                               //to co nalezy teraz zorbic to ulozyc ten podciag na odpowiednim miejscu
     }                                                                               //i podac odpowiednie parametry do rekursji
 }
@@ -788,6 +912,10 @@ void Robot::positionSolver(Shelf *shelf) {
 int Robot::getRobotMoves() const {
     return robotMoves;
 }
+
+
+
+
 
 
 
