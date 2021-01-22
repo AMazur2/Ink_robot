@@ -263,8 +263,8 @@ std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours
 }
 
 std::pair<int, int> Robot::findMaximalSubstring(std::vector<Ink> shelf, int start, int colour) {
-    int begining = 0;
-    int length = 0;
+    int begining = -1;
+    int length = -1;
     int tempBeg = 0;
     int tempLen = 0;
     int i = start;
