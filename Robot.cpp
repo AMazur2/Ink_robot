@@ -338,6 +338,12 @@ std::pair<int, int> Robot::findMaximalSubstring (std::vector<Ink> shelf, int sta
 
 std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextColour)
 {
+    std::cout << "Shelf: ";
+    for(int i = 0; i < shelf.size(); ++i)
+        std::cout << shelf[i].getColour();
+    std::cout << "\tStart: " << start;
+    std::cout << "\tNext colour: " << types[nextColour] << std::endl;
+
     std::vector<Ink> temporaryShelf;
     if(shelf[start].getColour() == types[nextColour])                       // od razu mamy odpowiedni pojemnik na miejscu
     {
@@ -383,9 +389,9 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
 
                 if(index > shelf.size()-4+position)                         //jezeli nie mozemy zrobic takiej czworki aby dany pojemnik byl na odpowiednim miejscu
                 {                                                           //przenosimy poprzedzajaca czworke (przypadek ze pojemnik jest za daleko na prawo aby go przeniesc)
-                    if(index-4>start)
+                    if(index-4 > start)
                         temporaryShelf = brutalForce(moveRight(shelf, index-4), start, nextColour);
-                    else
+                    else 
                         temporaryShelf = brutalForce(moveRight(shelf, start), start, nextColour);
                 }
                 else
@@ -398,8 +404,15 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
                     else                                                    //pojemnik jest zbyt blisko startu wiec musimy go oddalic
                     {                                                       //przenosimy czworke zaczynajac od pojemnika znajdujacego sie na pozycji 'start'
                         int newPosition = shelf.size()-4+index-start;       //obliczamy nowa pozycje naszego pojemnika i wtedy gdy mamy juz na pewno wystarczajaca ilosc
-                        std::vector<Ink> temp = moveRight(moveRight(shelf, start), newPosition-position);   //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
-                        temporaryShelf = brutalForce(moveLeft(temp, start, shelf.size()-5+position), start+1, (nextColour+1)%4);    //na koniec doprowadzamy nasz pojemnik
+                        std::vector<Ink> temp = moveRight(shelf, start);   //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
+                        if(newPosition-position+4 < temp.size())
+                            temporaryShelf = brutalForce(temp, start, nextColour);
+                        else
+                        {
+                            std::vector<Ink> help = moveRight(temp, newPosition-position);
+                            temporaryShelf = brutalForce(moveLeft(help, start, shelf.size()-5+position), start+1, (nextColour+1)%4);
+                        }
+                                                                            //na koniec doprowadzamy nasz pojemnik
                     }                                                       //na pozycje 'start' i kontynuujemy algorytm
                 }
                 
@@ -431,6 +444,7 @@ std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int 
     else
     {
         std::pair<int, int> p = findMaximalSubstring(shelf, start, nextColour);     //p.first - zawiera w sobie informacje o poczatku najdluzszego podciagu
+        std::cout << p.first << " " << p.second << std::endl;
         std::cout << "TODO: maximal substring algorithm" << std::endl;              //p.second - informuje jak dlugi jest ten podciag
         return shelf;                                                               //to co nalezy teraz zorbic to ulozyc ten podciag na odpowiednim miejscu
     }                                                                               //i podac odpowiednie parametry do rekursji
