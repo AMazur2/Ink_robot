@@ -263,8 +263,8 @@ std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours
 }
 
 std::pair<int, int> Robot::findMaximalSubstring(std::vector<Ink> shelf, int start, int colour) {
-    int begining = 0;
-    int length = 0;
+    int begining = -1;
+    int length = -1;
     int tempBeg = 0;
     int tempLen = 0;
     int i = start;
@@ -287,11 +287,10 @@ std::pair<int, int> Robot::findMaximalSubstring(std::vector<Ink> shelf, int star
                 if (tempLen > length) {
                     length = tempLen;
                     begining = tempBeg;
-                    nextColour = colour;
                 }
                 tempLen = 0;
                 tempBeg = 0;
-
+                nextColour = colour;
             }
         }
 
@@ -753,9 +752,9 @@ std::vector<Ink> Robot::positions(std::vector<Ink> shelf, int start, int nextCol
             if (indexOfWantedColour != start)
                 shelf = moveLeft(shelf, start, indexOfWantedColour - 1);
             if(this->types[nextColour] == 'K')
-                positions(shelf,start+1,(nextColour+1)%4,fourInksPatternLeft-1);
+                return positions(shelf,start+1,(nextColour+1)%4,fourInksPatternLeft-1);
             else
-                positions(shelf,start+1,(nextColour+1)%4,fourInksPatternLeft);
+                return positions(shelf,start+1,(nextColour+1)%4,fourInksPatternLeft);
         }
 
 
