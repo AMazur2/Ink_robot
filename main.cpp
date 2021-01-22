@@ -32,18 +32,16 @@ void solve(Shelf shelf, string outFileName, string solver)
     {
         r.naiveSolver(&shelf);
         shelf.showShelf();
-        return;
     }
     else if (solver == "substring")
     {
         r.maximalSubstringSolver(&shelf);
-        return;
+        shelf.showShelf();
     }
     else if (solver == "position")
     {
         r.positionSolver(&shelf);
         shelf.showShelf();
-        return;
     }
     else
     {
