@@ -287,11 +287,10 @@ std::pair<int, int> Robot::findMaximalSubstring(std::vector<Ink> shelf, int star
                 if (tempLen > length) {
                     length = tempLen;
                     begining = tempBeg;
-                    nextColour = colour;
                 }
                 tempLen = 0;
                 tempBeg = 0;
-
+                nextColour = colour;
             }
         }
 
