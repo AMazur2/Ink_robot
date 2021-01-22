@@ -352,9 +352,9 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
                 if (index > shelf.size() - 4 +
                             position)                         //jezeli nie mozemy zrobic takiej czworki aby dany pojemnik byl na odpowiednim miejscu
                 {                                                           //przenosimy poprzedzajaca czworke (przypadek ze pojemnik jest za daleko na prawo aby go przeniesc)
-                    if(index-4>start)
+                    if(index-4 > start)
                         temporaryShelf = brutalForce(moveRight(shelf, index-4), start, nextColour);
-                    else
+                    else 
                         temporaryShelf = brutalForce(moveRight(shelf, start), start, nextColour);
                 } else {
                     if (index - position >= start)        //jezeli nasz pojemnik jest odpowiednio oddalony od punktu startu (mozemy stworzyc czworke
@@ -364,13 +364,17 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
                         temporaryShelf = brutalForce(temp, start + 1, (nextColour + 1) % 4);      //tak aby nasz pojemnik byl na miejscu 'start' i kontynuujemy algorytm
                     } else                                                    //pojemnik jest zbyt blisko startu wiec musimy go oddalic
                     {                                                       //przenosimy czworke zaczynajac od pojemnika znajdujacego sie na pozycji 'start'
-                        int newPosition = shelf.size() - 4 + index -
-                                          start;       //obliczamy nowa pozycje naszego pojemnika i wtedy gdy mamy juz na pewno wystarczajaca ilosc
-                        std::vector<Ink> temp = moveRight(moveRight(shelf, start), newPosition -
-                                                                                   position);   //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
-                        temporaryShelf = brutalForce(moveLeft(temp, start, shelf.size() - 5 + position), start + 1,
-                                                     (nextColour + 1) % 4);    //na koniec doprowadzamy nasz pojemnik
-                    }                                                       //na pozycje 'start' i kontynuujemy algorytm
+
+                        int newPosition = shelf.size()-4+index-start;       //obliczamy nowa pozycje naszego pojemnika i wtedy gdy mamy juz na pewno wystarczajaca ilosc
+                        std::vector<Ink> temp = moveRight(shelf, start);    //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
+                        if(newPosition-position+4 < temp.size())            //sprawdzamy czy nowa pozycja pozwoli nam zrobić przesuniecie ktore chcemy
+                            temporaryShelf = brutalForce(temp, start, nextColour);  //jezeli nie mozemy to powtarzamy algorytm
+                        else                                                //jednakze, gdy mozemy to przenosimy ta nasza wybrana czworke
+                        {                                                   //dosuwamy wybrany pojemnik do lewej storny (na pozycje start)
+                            std::vector<Ink> help = moveRight(temp, newPosition-position); //a nastepnie kontynuujemy algorytm
+                            temporaryShelf = brutalForce(moveLeft(help, start, shelf.size()-5+position), start+1, (nextColour+1)%4);
+                        }
+                    }                                                       
                 }
 
             }
@@ -728,9 +732,6 @@ std::vector<Ink> Robot::maximalSubstring(std::vector<Ink> shelf, int start, int 
                 return temporaryShelf;
             }
 
-
-
-
         }
         return shelf;                                                               //to co nalezy teraz zorbic to ulozyc ten podciag na odpowiednim miejscu
     }                                                                               //i podac odpowiednie parametry do rekursji
@@ -917,21 +918,3 @@ void Robot::positionSolver(Shelf *shelf) {
 int Robot::getRobotMoves() const {
     return robotMoves;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
