@@ -10,11 +10,12 @@
 class Shelf
 {
     private:
-        std::vector<Ink> shelf;
+    Shelf(std::vector<Ink> shelf);
+
+    std::vector<Ink> shelf;
     
     public:
         Shelf() {};
-        Shelf(std::string fileName);
         Shelf(int number);
         Shelf(int amount, std::string sequences[], int probabilities[], int size);
         ~Shelf() {};
@@ -22,6 +23,14 @@ class Shelf
         void setShelf(std::vector<Ink> s) {shelf = s;};
         void showShelf();
 
+        static Shelf*  getShelfFromSring(std::string s);
+        static Shelf*  getShelfFromFile(std::string fileName);
+
+    std::string ShelfToString();
+
+    static bool checkIfSorted(std::string shelf);
+
+    static int countLetters(std::string shelf, int start);
 };
 
 #endif

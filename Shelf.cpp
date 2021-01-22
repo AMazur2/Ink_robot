@@ -1,7 +1,17 @@
+#include <algorithm>
 #include "Shelf.hpp"
 
 
-Shelf::Shelf(std::string fileName)
+Shelf *Shelf::getShelfFromSring(std::string s) {
+    std::vector<Ink> newShelf;
+    for(char c : s){
+        Ink i = Ink(c);
+        newShelf.push_back(i);
+    }
+    return new Shelf(newShelf);
+}
+
+Shelf* Shelf::getShelfFromFile(std::string fileName)
 {
     std::ifstream file(fileName);
     std::vector<Ink> v1;
@@ -18,14 +28,18 @@ Shelf::Shelf(std::string fileName)
     else
         std::cout<<"Couldn't open a file: " << fileName << std::endl;
 
-    shelf = v1;
+    return new Shelf(v1);
+}
+
+Shelf::Shelf(std::vector<Ink> shelf){
+    this->shelf = shelf;
 }
 
 Shelf::Shelf(int number)
 {
     char colours[4] = {'C', 'M', 'Y', 'K'};
     std::vector<Ink> v1;
-    srand((unsigned)time(NULL));
+//    srand((unsigned)time(NULL));
 
     for( int i = 0; i < number; i++ )
     {
@@ -97,3 +111,82 @@ void Shelf::showShelf()
         std::cout << shelf[i].getColour();
     std::cout << std::endl;
 }
+
+std::string Shelf::ShelfToString()
+{
+    std::string result;
+    for(int i = 0; i < shelf.size(); i++)
+        result += shelf[i].getColour();
+    return result;
+}
+
+bool Shelf::checkIfSorted(std::string shelf) {
+    char letters[] = {'C','M','Y','K'};
+    int i = 0;
+    while(i<shelf.size() && shelf[i] == letters[i%4]){
+        i++;
+    }
+    if(shelf.size() - (i) <= 4)
+        return true;
+    int minFromLetters = countLetters(shelf,i);
+    if(minFromLetters == 0)
+            return true;
+        else{
+            std::cout<<shelf;
+            std::cout.flush();
+            return false;
+        }
+
+//    int firstNotFour = -1, i = 3;
+//    while(i < shelf.size() && firstNotFour == -1){
+//        char c = shelf[i-3];
+//        char m = shelf[i-2];
+//        char y = shelf[i-1];
+//        char k = shelf[i-0];
+//        if( !(c=='C' && m=='M' && y=='Y' && k=='K') )
+//            firstNotFour = i - 3;
+//        i+=4;
+//    }
+//
+//    int howManyLeft = shelf.size() - firstNotFour;
+//    if(howManyLeft <= 4)
+//        return true;
+//    else{
+//        int minFromLetters = countLetters(shelf,firstNotFour);
+//        if(minFromLetters == 0)
+//            return true;
+//        else{
+//            std::cout<<shelf;
+//            std::cout.flush();
+//            return false;
+//        }
+//    }
+
+}
+
+int Shelf::countLetters(std::string shelf, int start) {
+    int c=0, m=0, y=0, k=0;
+    for(int i = start; i < shelf.length(); i++){
+        switch (shelf[i]) {
+            case 'C':
+                c++;
+                break;
+            case 'M':
+                m++;
+                break;
+            case 'Y':
+                y++;
+                break;
+            case 'K':
+                k++;
+                break;
+            default:
+                std::cout<<"shelf contains letter other than CMYK: ";
+                std::cout<<shelf[i]<<std::endl;
+                exit(1);
+        }
+    }
+    return std::min(c, std::min(m, std::min(y, k)));
+}
+
+
