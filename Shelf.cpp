@@ -39,6 +39,7 @@ Shelf::Shelf(int number)
 {
     char colours[4] = {'C', 'M', 'Y', 'K'};
     std::vector<Ink> v1;
+    srand((unsigned)time(NULL));
 
     for( int i = 0; i < number; i++ )
     {
@@ -54,6 +55,7 @@ Shelf::Shelf(int amount, std::string sequences[], int probabilities[], int size)
 {
     std::vector<Ink> v1;
     char colours[4] = {'C', 'M', 'Y', 'K'};
+    srand((unsigned)time(NULL));
 
     for(int i = 0; i < amount; ++i)
     {

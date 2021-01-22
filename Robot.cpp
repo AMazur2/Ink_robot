@@ -12,7 +12,7 @@ int Robot::findNumber(std::vector<Ink> shelf)   //zwraca maksymalna ilosc czwore
             c++;
         else if (shelf[i].getColour() == 'M')
             m++;
-        else if (shelf[i].getColour() == 'Y')
+        else if(shelf[i].getColour() == 'Y')
             y++;
         else
             k++;
@@ -48,8 +48,7 @@ std::vector<int> Robot::findFours(std::vector<Ink> shelf)   //znajduje wysztkie 
     return places;
 }
 
-std::vector<Ink> Robot::moveRight(std::vector<Ink> shelf,
-                                  int start)    //przesuwa w prawo 4 pojemniki zaczynajac od indeksu 'start' a reszte dosuwa zapelniajac puste pole
+std::vector<Ink> Robot::moveRight(std::vector<Ink> shelf, int start)//przesuwa w prawo 4 pojemniki zaczynajac od indeksu 'start' a reszte dosuwa zapelniajac puste pole
 {
     std::vector<Ink> v;
     for (int i = 0; i < start; ++i)
@@ -70,8 +69,7 @@ std::vector<Ink> Robot::moveRight(std::vector<Ink> shelf,
     return v;
 }
 
-std::vector<Ink> Robot::moveLeft(std::vector<Ink> shelf, int start,
-                                 int stop)   //przesuwa pojemniki tak, aby pojemnik na miejscu 'stop+1' znalazl sie na miejscu 'start'
+std::vector<Ink> Robot::moveLeft(std::vector<Ink> shelf, int start, int stop)//przesuwa pojemniki tak, aby pojemnik na miejscu 'stop+1' znalazl sie na miejscu 'start'
 {                                                                       //potencjalne TODO: upewnic sie ze miedzy start a stop jest 4k pojemnikow, chociaz gleboko wierze
     //ze wzory ktore wyprowadzilem, zapewniaja juz optymalna ilosc pojemnikow do przesuwania
     int toMove = (stop - start + 1) / 4;
@@ -85,8 +83,7 @@ std::vector<Ink> Robot::moveLeft(std::vector<Ink> shelf, int start,
     return temp;
 }
 
-std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours,
-                                  int start)    //przesuwa gotowe czworki na poczatek ciagu
+std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours, int start)//przesuwa gotowe czworki na poczatek ciagu
 {
     //ulatwia znajdywanie bledow
 /*    std::cout << "fours.size(): " << fours.size();
@@ -109,8 +106,7 @@ std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours
             if ((fours[0] - start) % 4 == 0)                     //pomiędzy kolejną czwórką a 'startem' jest 4k miejsc
             {
                 int temp = fours[0];
-                int amount = temp -
-                             start;                  //o ile miejsc zostanie przesuniety ciag znajdujacy sie za czworka
+                int amount = temp - start;//o ile miejsc zostanie przesuniety ciag znajdujacy sie za czworka
                 fours.erase(fours.begin());
                 for (int i = 0; i < fours.size(); ++i)
                     fours[i] -= amount;                     //aktualizujemy pozycje czworek 
@@ -146,8 +142,7 @@ std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours
                             if (tempStart + 8 <
                                 fours[1])      //mamy bezpieczną odleglość do przesuwania (aby nie uszkodzic nastepnej czworki)
                             {
-                                std::vector<Ink> temp = moveLeft(moveRight(moveRight(shelf, tempStart), tempStart),
-                                                                 start, shelf.size() - 5 - shift);
+                                std::vector<Ink> temp = moveLeft(moveRight(moveRight(shelf, tempStart), tempStart), start, shelf.size()-5-shift);
                                 std::vector<int> foursPrim = findFours(temp);
                                 bool deleted = true;
                                 while (deleted)                          //usuwamy te, ktore juz sa ulozone
@@ -187,8 +182,7 @@ std::vector<Ink> Robot::sortFours(std::vector<Ink> shelf, std::vector<int> fours
                                 temporary = moveLeft(temp, start, shelf.size() - amount * 4 + pos -
                                                                   1); //doprowadzamy nasza czworke na poczatek (obecny 'start')
                                 temp = temporary;
-                                std::vector<int> foursPrim = findFours(
-                                        temp);                //obliczamy nowe pozycje czworek
+                                std::vector<int> foursPrim = findFours(temp);//obliczamy nowe pozycje czworek
 
                                 bool deleted = true;
                                 while (deleted)                          //usuwamy te, ktore juz sa ulozone
@@ -314,8 +308,7 @@ std::pair<int, int> Robot::findMaximalSubstring(std::vector<Ink> shelf, int star
 
 std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextColour) {
     std::vector<Ink> temporaryShelf;
-    if (shelf[start].getColour() ==
-        types[nextColour])                       // od razu mamy odpowiedni pojemnik na miejscu
+    if(shelf[start].getColour() == types[nextColour])// od razu mamy odpowiedni pojemnik na miejscu
     {
         if (start + 1 <
             shelf.size())                                          //jezeli istnieje nastepny pojemnik to rekursywnie przechodzimy dalej
