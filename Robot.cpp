@@ -404,16 +404,15 @@ std::vector<Ink> Robot::brutalForce(std::vector<Ink> shelf, int start, int nextC
                     else                                                    //pojemnik jest zbyt blisko startu wiec musimy go oddalic
                     {                                                       //przenosimy czworke zaczynajac od pojemnika znajdujacego sie na pozycji 'start'
                         int newPosition = shelf.size()-4+index-start;       //obliczamy nowa pozycje naszego pojemnika i wtedy gdy mamy juz na pewno wystarczajaca ilosc
-                        std::vector<Ink> temp = moveRight(shelf, start);   //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
-                        if(newPosition-position+4 < temp.size())
-                            temporaryShelf = brutalForce(temp, start, nextColour);
-                        else
-                        {
-                            std::vector<Ink> help = moveRight(temp, newPosition-position);
+                        std::vector<Ink> temp = moveRight(shelf, start);    //pojemnikow przenoismy nasz pojemnik aby znajdowal sie na odpowiedniej pozycji
+                        if(newPosition-position+4 < temp.size())            //sprawdzamy czy nowa pozycja pozwoli nam zrobić przesuniecie ktore chcemy
+                            temporaryShelf = brutalForce(temp, start, nextColour);  //jezeli nie mozemy to powtarzamy algorytm
+                        else                                                //jednakze, gdy mozemy to przenosimy ta nasza wybrana czworke
+                        {                                                   //dosuwamy wybrany pojemnik do lewej storny (na pozycje start)
+                            std::vector<Ink> help = moveRight(temp, newPosition-position); //a nastepnie kontynuujemy algorytm
                             temporaryShelf = brutalForce(moveLeft(help, start, shelf.size()-5+position), start+1, (nextColour+1)%4);
                         }
-                                                                            //na koniec doprowadzamy nasz pojemnik
-                    }                                                       //na pozycje 'start' i kontynuujemy algorytm
+                    }                                                       
                 }
                 
             }
